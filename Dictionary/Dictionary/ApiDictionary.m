@@ -14,7 +14,7 @@
 #define APP_KEY @"c360af3c7857068578608c17e2060ebf"
 
 NSString *language = @"en";
-NSString *target_lang = @"zu";
+NSString *target_lang = @"es";
 NSString *word = @"Change";
 
 - (void) makeRequest: (NSString *)withWord
@@ -34,6 +34,7 @@ NSString *word = @"Change";
         if (error)
         {
             NSLog(@"We got error");
+            return;
         }
         
         NSError *parseError = nil;
@@ -66,13 +67,11 @@ NSString *word = @"Change";
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-             [self.delegate updateData: [translatedWords componentsJoinedByString:@" "]];
+             [self.delegate updateData: [translatedWords componentsJoinedByString:@"\n"]];
         });
        
     }];
     [task resume];
 }
-
-
 
 @end

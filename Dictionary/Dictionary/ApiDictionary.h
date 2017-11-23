@@ -10,7 +10,6 @@
 #import "UpdateDataProtocol.h"
 
 @interface ApiDictionary : NSObject
-
-- (void) makeRequest: (NSString *) withWord;
+- (void)makeRequest: (NSString *)withWord;
 @property (weak, nonatomic, readwrite) id<UpdateDataProtocol> delegate;
 @end

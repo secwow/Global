@@ -10,7 +10,5 @@
 #import "UpdateDataProtocol.h"
 
 @interface ViewController  : UIViewController
-
-
 @end
 

@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface SearchViewModel : NSObject
-    @property (strong, nonatomic) NSString *searchText;
-    @property (strong, nonatomic) NSString *wordTranslate;
+@property (strong, nonatomic) NSString *searchText;
+@property (strong, nonatomic) NSString *wordTranslate;
 @end
