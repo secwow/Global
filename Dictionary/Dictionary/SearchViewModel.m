@@ -29,7 +29,7 @@ ApiDictionary *model;
 {
     if ([keyPath isEqualToString: @"searchText"])
     {
-        [model makeRequest:change[@"new"]];
+        [model translateWord:change[@"new"]];
     }
     else if ([keyPath isEqualToString: @"translatedWords"])
     {
@@ -43,8 +43,8 @@ ApiDictionary *model;
 
 - (void)registerObserver
 {
-    [self addObserver: self forKeyPath: @"searchText" options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context: nil];
-    [model addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context: nil];
+    [self addObserver: self forKeyPath: @"searchText" options: NSKeyValueObservingOptionNew context: nil];
+    [model addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
 }
 
 - (void)unregisterObserver

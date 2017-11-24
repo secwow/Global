@@ -15,7 +15,7 @@
 #define LANGUAGE @"en"
 #define TAGRET_LANGUAGE @"es"
 
-- (void) makeRequest: (NSString *)withWord
+- (void) translateWord: (NSString *)withWord
 {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@", LANGUAGE, withWord, TAGRET_LANGUAGE]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];

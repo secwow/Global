@@ -34,7 +34,7 @@
 
 - (void) registerObserver
 {
-    [self.viewModel addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew  context: nil];
+    [self.viewModel addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
     [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
 }
 

@@ -12,6 +12,6 @@
 
 @property (strong, nonatomic) NSArray<NSString *>* translatedWords;
 
-- (void)makeRequest: (NSString *)withWord;
+- (void)translateWord: (NSString *)withWord;
 
 @end
