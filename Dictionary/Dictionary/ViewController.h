@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UpdateDataProtocol.h"
 
 @interface ViewController  : UIViewController
+
 @end
 

@@ -12,14 +12,12 @@
 #import "ApiDictionary.h"
 #define APP_ID @"9436ccf8"
 #define APP_KEY @"c360af3c7857068578608c17e2060ebf"
-
-NSString *language = @"en";
-NSString *target_lang = @"es";
-NSString *word = @"Change";
+#define LANGUAGE @"en"
+#define TAGRET_LANGUAGE @"en"
 
 - (void) makeRequest: (NSString *)withWord
 {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@", language, withWord, target_lang]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@", LANGUAGE, withWord, TAGRET_LANGUAGE]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setHTTPMethod:@"GET"];
     
@@ -45,6 +43,7 @@ NSString *word = @"Change";
         if (parseError)
         {
             NSLog(@"%@", parseError.localizedDescription);
+            return;
         }
         NSMutableArray *translatedWords = [[NSMutableArray alloc] init];
         if([object isKindOfClass:[NSDictionary class]])
@@ -67,7 +66,7 @@ NSString *word = @"Change";
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-             [self.delegate updateData: [translatedWords componentsJoinedByString:@"\n"]];
+            self.translatedWords = translatedWords;
         });
        
     }];

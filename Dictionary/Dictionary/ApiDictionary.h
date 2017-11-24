@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "UpdateDataProtocol.h"
 
 @interface ApiDictionary : NSObject
+
+@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
+
 - (void)makeRequest: (NSString *)withWord;
-@property (weak, nonatomic, readwrite) id<UpdateDataProtocol> delegate;
+
 @end

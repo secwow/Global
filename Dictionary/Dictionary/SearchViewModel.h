@@ -10,5 +10,6 @@
 
 @interface SearchViewModel : NSObject
 @property (strong, nonatomic) NSString *searchText;
-@property (strong, nonatomic) NSString *wordTranslate;
+@property (strong, nonatomic) NSArray<NSString *> *translatedWords;
+
 @end

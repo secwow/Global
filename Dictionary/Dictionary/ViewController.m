@@ -10,7 +10,7 @@
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
 
-@interface ViewController()<UpdateDataProtocol>
+@interface ViewController()
 
 @property (strong, nonatomic) SearchViewModel *viewModel;
 @property (weak, nonatomic) IBOutlet UITextField *searchField;
@@ -19,8 +19,6 @@
 @end
 
 @implementation ViewController 
-
-ApiDictionary *api = nil;
 
 - (void)updateData: (NSString *)translatedWord
 {
@@ -31,24 +29,56 @@ ApiDictionary *api = nil;
 {
     [super viewDidLoad];
     self.viewModel = [[SearchViewModel alloc] init];
-    api = [[ApiDictionary alloc] init];
-    api.delegate = self;
-    [self.searchField addTarget:self action: @selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self registerObserver];
 }
 
--(void)textFieldDidChange: (UITextField *) textField
+- (void) registerObserver
+{
+    [self.viewModel addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew  context: nil];
+    [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
+}
+
+- (void) unregisterObserver
+{
+    [self.viewModel removeObserver: self forKeyPath:@"translatedWords"];
+    [self.searchField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString: @"translatedWords"])
+    {
+        NSArray<NSString *> *kChangeNew = [change valueForKey: @"new"];
+        self.searchField.text = [kChangeNew componentsJoinedByString: @"\n"];
+    }
+    else
+    {
+        [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
+    }
+}
+
+- (void)textFieldDidChange: (UITextField *)textField
 {
     if (textField.text.length < 3)
     {
         return;
     }
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector: @selector(searchWordInDictionary) object: nil];
-    [self performSelector:@selector(searchWordInDictionary) withObject:nil afterDelay:0.5];
+    [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(searchWordInDictionary) object: nil];
+    [self performSelector: @selector(searchWordInDictionary) withObject: nil afterDelay: 0.5];
 }
 
- - (void)searchWordInDictionary
+- (void)searchWordInDictionary
+{
+ if (self.searchField.text.length < 3)
  {
-     [api makeRequest: self.searchField.text];
+     return;
  }
+ self.viewModel.searchText = self.searchField.text;
+}
+
+- (void)dealloc
+{
+    [self unregisterObserver];
+}
 
 @end
