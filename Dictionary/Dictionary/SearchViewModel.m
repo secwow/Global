@@ -9,19 +9,24 @@
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
 
+@interface SearchViewModel()
+
+@property (strong, nonatomic) ApiDictionary *model;
+
+@end
+
 @implementation SearchViewModel
 
-ApiDictionary *model;
-
-- (id)init
+- (id)initWithModel:(ApiDictionary *)api
 {
     self = [super init];
     
     if (self != nil)
     {
-        model = [[ApiDictionary alloc] init];
+        self.model = api;
         [self registerObserver];
     }
+    
     return self;
 }
 
@@ -29,7 +34,7 @@ ApiDictionary *model;
 {
     if ([keyPath isEqualToString: @"searchText"])
     {
-        [model translateWord:change[@"new"]];
+        [self.model translateWord:change[@"new"]];
     }
     else if ([keyPath isEqualToString: @"translatedWords"])
     {
@@ -44,13 +49,13 @@ ApiDictionary *model;
 - (void)registerObserver
 {
     [self addObserver: self forKeyPath: @"searchText" options: NSKeyValueObservingOptionNew context: nil];
-    [model addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
+    [self.model addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
 }
 
 - (void)unregisterObserver
 {
     [self removeObserver: self forKeyPath: @"searchText"];
-    [model removeObserver: self forKeyPath: @"translatedWords"];
+    [self.model removeObserver: self forKeyPath: @"translatedWords"];
 }
 
 - (void)dealloc

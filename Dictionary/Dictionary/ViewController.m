@@ -12,15 +12,14 @@
 
 @interface ViewController()
 
-@property (strong, nonatomic) SearchViewModel *viewModel;
 @property (weak, nonatomic) IBOutlet UITextField *searchField;
 @property (weak, nonatomic) IBOutlet UITextView *resultField;
 
 @end
 
-@implementation ViewController 
+@implementation ViewController
 
-- (void)updateData: (NSString *)translatedWord
+- (void)updateData:(NSString *)translatedWord
 {
     self.resultField.text = translatedWord;
 }
@@ -28,7 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.viewModel = [[SearchViewModel alloc] init];
     [self registerObserver];
 }
 
@@ -63,6 +61,7 @@
     {
         return;
     }
+    
     [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(searchWordInDictionary) object: nil];
     [self performSelector: @selector(searchWordInDictionary) withObject: nil afterDelay: 0.5];
 }
@@ -73,6 +72,7 @@
     {
         return;
     }
+    
     self.viewModel.searchText = self.searchField.text;
 }
 

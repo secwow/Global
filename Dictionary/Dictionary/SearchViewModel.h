@@ -7,9 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ApiDictionary.h"
 
 @interface SearchViewModel : NSObject
+
 @property (strong, nonatomic) NSString *searchText;
 @property (strong, nonatomic) NSArray<NSString *> *translatedWords;
+
+- (id) initWithModel: (ApiDictionary *) api;
 
 @end
