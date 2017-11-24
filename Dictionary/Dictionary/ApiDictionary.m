@@ -13,7 +13,7 @@
 #define APP_ID @"9436ccf8"
 #define APP_KEY @"c360af3c7857068578608c17e2060ebf"
 #define LANGUAGE @"en"
-#define TAGRET_LANGUAGE @"en"
+#define TAGRET_LANGUAGE @"es"
 
 - (void) makeRequest: (NSString *)withWord
 {
@@ -45,26 +45,31 @@
             NSLog(@"%@", parseError.localizedDescription);
             return;
         }
+        
         NSMutableArray *translatedWords = [[NSMutableArray alloc] init];
+        
         if([object isKindOfClass:[NSDictionary class]])
         {
             NSDictionary *results = object;
             NSDictionary *secondary = results[@"results"][0][@"lexicalEntries"][0][@"entries"][0][@"senses"];
            
-            for(NSDictionary *dictionary in secondary) {
+            for(NSDictionary *dictionary in secondary)
+            {
                 
                 for (NSString *key in [dictionary allKeys])
                 {
                     
                     if ([key isEqualToString:@"translations"])
                     {
-                        for (NSDictionary* translate in dictionary[key]) {
+                        for (NSDictionary* translate in dictionary[key])
+                        {
                             [translatedWords addObject: translate[@"text"]];
                         }
                     }
                 }
             }
         }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             self.translatedWords = translatedWords;
         });

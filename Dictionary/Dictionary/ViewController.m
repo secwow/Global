@@ -49,7 +49,7 @@
     if ([keyPath isEqualToString: @"translatedWords"])
     {
         NSArray<NSString *> *kChangeNew = [change valueForKey: @"new"];
-        self.searchField.text = [kChangeNew componentsJoinedByString: @"\n"];
+        self.resultField.text = [kChangeNew componentsJoinedByString: @"\n"];
     }
     else
     {
@@ -69,11 +69,11 @@
 
 - (void)searchWordInDictionary
 {
- if (self.searchField.text.length < 3)
- {
-     return;
- }
- self.viewModel.searchText = self.searchField.text;
+    if (self.searchField.text.length < 3)
+    {
+        return;
+    }
+    self.viewModel.searchText = self.searchField.text;
 }
 
 - (void)dealloc

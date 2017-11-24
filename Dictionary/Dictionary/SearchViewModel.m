@@ -16,6 +16,7 @@ ApiDictionary *model;
 - (id)init
 {
     self = [super init];
+    
     if (self != nil)
     {
         model = [[ApiDictionary alloc] init];
