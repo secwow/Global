@@ -32,13 +32,15 @@
 
 - (void) registerObserver
 {
-    [self.viewModel addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
+    [self.viewModel addObserver:self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
+    [self.viewModel addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
     [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
 }
 
 - (void) unregisterObserver
 {
     [self.viewModel removeObserver: self forKeyPath:@"translatedWords"];
+    [self.viewModel removeObserver: self forKeyPath:@"errorMessage"];
     [self.searchField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
 }
 
@@ -49,6 +51,19 @@
         NSArray<NSString *> *kChangeNew = [change valueForKey: @"new"];
         self.resultField.text = [kChangeNew componentsJoinedByString: @"\n"];
     }
+    else if ([keyPath isEqualToString:@"errorMessage"])
+    {
+        NSString *error = [change valueForKey: @"new"];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:error preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [alert dismissViewControllerAnimated:true completion:nil];
+        }];
+        [alert addAction:ok];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:alert animated:true completion:nil];
+        });
+    }
     else
     {
         [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
@@ -57,23 +72,7 @@
 
 - (void)textFieldDidChange: (UITextField *)textField
 {
-    if (textField.text.length < 3)
-    {
-        return;
-    }
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(searchWordInDictionary) object: nil];
-    [self performSelector: @selector(searchWordInDictionary) withObject: nil afterDelay: 0.5];
-}
-
-- (void)searchWordInDictionary
-{
-    if (self.searchField.text.length < 3)
-    {
-        return;
-    }
-    
-    self.viewModel.searchText = self.searchField.text;
+    [self.viewModel searchTextUpdated: textField.text];
 }
 
 - (void)dealloc

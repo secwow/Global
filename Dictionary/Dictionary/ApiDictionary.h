@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
 @interface ApiDictionary : NSObject
 
-@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
+@property (strong, nonatomic, readonly) NSArray<NSString *>* translatedWords;
+@property (strong, nonatomic, readonly) NSString *errorMessage;
 
 - (void)translateWord:(NSString *)withWord;
 

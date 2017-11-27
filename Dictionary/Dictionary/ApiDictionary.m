@@ -7,6 +7,14 @@
 //
 #import "ApiDictionary.h"
 
+@interface ApiDictionary()
+
+@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
+@property (strong, nonatomic) NSString *errorMessage;
+
+@end
+
+
 @implementation ApiDictionary
 
 #import "ApiDictionary.h"
@@ -31,7 +39,7 @@
     {
         if (error)
         {
-            NSLog(@"We got error");
+            self.errorMessage = @"Unsupported language";
             return;
         }
         
@@ -42,7 +50,7 @@
                      error: &parseError];
         if (parseError)
         {
-            NSLog(@"%@", parseError.localizedDescription);
+            self.errorMessage = @"We couldn't find anything";
             return;
         }
         

@@ -13,6 +13,9 @@
 
 @property (strong, nonatomic) ApiDictionary *model;
 
+@property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
+@property (nonatomic, readwrite) NSString *errorMessage;
+
 @end
 
 @implementation SearchViewModel
@@ -30,15 +33,26 @@
     return self;
 }
 
+- (void)searchTextUpdated:(NSString *)searchText
+{
+    if (searchText.length < 3)
+    {
+        return;
+    }
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget: self.model];
+    [self.model performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if ([keyPath isEqualToString: @"searchText"])
-    {
-        [self.model translateWord:change[@"new"]];
-    }
-    else if ([keyPath isEqualToString: @"translatedWords"])
+    if ([keyPath isEqualToString: @"translatedWords"])
     {
         self.translatedWords = change[@"new"];
+    }
+    else if ([keyPath isEqualToString: @"errorMessage"])
+    {
+        self.errorMessage = change[@"new"];
     }
     else
     {
@@ -48,14 +62,14 @@
 
 - (void)registerObserver
 {
-    [self addObserver: self forKeyPath: @"searchText" options: NSKeyValueObservingOptionNew context: nil];
-    [self.model addObserver: self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
+    [self.model addObserver:self forKeyPath:@"translatedWords" options:NSKeyValueObservingOptionNew context:nil];
+    [self.model addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)unregisterObserver
 {
-    [self removeObserver: self forKeyPath: @"searchText"];
-    [self.model removeObserver: self forKeyPath: @"translatedWords"];
+    [self.model removeObserver:self forKeyPath:@"translatedWords"];
+    [self.model removeObserver:self forKeyPath:@"errorMessage"];
 }
 
 - (void)dealloc

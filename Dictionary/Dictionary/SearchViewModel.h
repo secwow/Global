@@ -11,9 +11,14 @@
 
 @interface SearchViewModel : NSObject
 
-@property (strong, nonatomic) NSString *searchText;
-@property (strong, nonatomic) NSArray<NSString *> *translatedWords;
-
 - (id) initWithModel: (ApiDictionary *) api;
+
+///props
+@property (nonatomic, readonly) NSArray<NSString *> *translatedWords;
+@property (nonatomic, readonly) NSString *errorMessage;
+
+/////actions
+//@property (strong, nonatomic) NSString *searchText;
+- (void) searchTextUpdated:(NSString *) searchText;
 
 @end
