@@ -55,7 +55,7 @@
         }
         
         NSMutableArray *translatedWords = [[NSMutableArray alloc] init];
-        
+      
         if([object isKindOfClass:[NSDictionary class]])
         {
             NSDictionary *results = object;
