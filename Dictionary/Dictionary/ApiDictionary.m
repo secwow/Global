@@ -39,7 +39,8 @@
     {
         if (error)
         {
-            [self.delegate didGetError:@"Unsupported language"];
+            self.errorMessage = @"Unsupported language";
+            [self.delegate didGetError:self.errorMessage];
             return;
         }
         
@@ -50,7 +51,8 @@
                      error: &parseError];
         if (parseError)
         {
-            [self.delegate didGetError:@"We couldn't find anything"];
+            self.errorMessage = @"We couldn't find anything";
+            [self.delegate didGetError:self.errorMessage];
             return;
         }
         
@@ -79,6 +81,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            self.translatedWords = translatedWords;
             [self.delegate updateTranslatedWords:translatedWords];
         });
        
