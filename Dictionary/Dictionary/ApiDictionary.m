@@ -39,7 +39,7 @@
     {
         if (error)
         {
-            self.errorMessage = @"Unsupported language";
+            [self.delegate didGetError:@"Unsupported language"];
             return;
         }
         
@@ -50,7 +50,7 @@
                      error: &parseError];
         if (parseError)
         {
-            self.errorMessage = @"We couldn't find anything";
+            [self.delegate didGetError:@"We couldn't find anything"];
             return;
         }
         

@@ -26,32 +26,6 @@
     [self.searchTextField addTarget:self action:@selector(textChanged) forControlEvents:UIControlEventEditingChanged];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString: @"translatedWords"])
-    {
-        NSArray<NSString *> *kChangeNew = [change valueForKey: @"new"];
-        self.resultField.text = [kChangeNew componentsJoinedByString: @"\n"];
-    }
-    else if ([keyPath isEqualToString:@"errorMessage"])
-    {
-        NSString *error = [change valueForKey: @"new"];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:error preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-            [alert dismissViewControllerAnimated:true completion:nil];
-        }];
-        [alert addAction:ok];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self presentViewController:alert animated:true completion:nil];
-        });
-    }
-    else
-    {
-        [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-    }
-}
-
 - (void)textChanged
 {
     [self.viewModel searchTextUpdated:self.searchTextField.text];
@@ -60,6 +34,25 @@
 - (void)updateTranslatedWords:(NSArray<NSString *> *)words
 {
     self.resultField.text = [words componentsJoinedByString: @"\n"];
+}
+
+- (void)didGetError:(NSString *)errorText
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorText preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+        [alert dismissViewControllerAnimated:true completion:nil];
+    }];
+    [alert addAction:ok];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self presentViewController:alert animated:true completion:nil];
+    });
+    self.resultField.text = @"";
+}
+
+- (void)dealloc
+{
+    [self.searchTextField removeTarget:self action:@selector(textChanged) forControlEvents:UIControlEventValueChanged];
 }
 
 @end
