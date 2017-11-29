@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "SearchViewModel.h"
-#import "DataUpdater.h"
 
-@interface ViewController: UIViewController<DataUpdater, UITextFieldDelegate>
+@interface ViewController: UIViewController<UITextFieldDelegate>
 
 @property (strong, nonatomic) SearchViewModel *viewModel;
 

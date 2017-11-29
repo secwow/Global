@@ -39,7 +39,9 @@
     {
         if (error)
         {
-            [self.delegate didGetError:@"Unsupported language"];
+            self.errorMessage = @"Unsupported language";
+            self.recivedError(self.errorMessage);
+            
             return;
         }
         
@@ -50,7 +52,9 @@
                      error: &parseError];
         if (parseError)
         {
-            [self.delegate didGetError:@"We couldn't find anything"];
+            self.errorMessage = @"We couldn't find anything";
+            self.recivedError(self.errorMessage);
+        
             return;
         }
         
@@ -79,7 +83,8 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate updateTranslatedWords:translatedWords];
+            self.translatedWords = translatedWords;
+            self.updateTranslatedWords(translatedWords);
         });
        
     }];

@@ -8,15 +8,13 @@
 
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
-#import "DataUpdater.h"
 
-@interface SearchViewModel()<DataUpdater>
+@interface SearchViewModel()
 
 @property (strong, nonatomic) ApiDictionary *model;
 
 @property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readwrite) NSString *errorMessage;
-@property (nonatomic, weak) id<DataUpdater> delegate;
 
 @end
 
@@ -29,6 +27,21 @@
     if (self != nil)
     {
         self.model = api;
+        __weak SearchViewModel *strongSelf = self;
+        self.model.updateTranslatedWords = ^(NSArray<NSString *>* words){
+            if (!strongSelf)
+            {
+                return;
+            }
+            strongSelf.updateTranslatedWords(words);
+        };
+        self.model.recivedError= ^(NSString *errorMessage){
+            if (!strongSelf)
+            {
+                return;
+            }
+            strongSelf.recivedError(errorMessage);
+        };
     }
     
     return self;
@@ -50,20 +63,5 @@
     [self.model translateWord:word];
 }
 
-- (void)changeDelegate:(id<DataUpdater>)delegate
-{
-    self.delegate = delegate;
-    self.model.delegate = self;
-}
-
-- (void)didGetError:(NSString *)errorText {
-    self.errorMessage = errorText;
-    [self.delegate didGetError:errorText];
-}
-
-- (void)updateTranslatedWords:(NSArray<NSString *> *)words {
-    self.translatedWords = words;
-    [self.delegate updateTranslatedWords:words];
-}
 
 @end

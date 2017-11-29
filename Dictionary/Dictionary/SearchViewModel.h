@@ -8,18 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "ApiDictionary.h"
-#import "DataUpdater.h"
 
 @interface SearchViewModel : NSObject
 
 - (id) initWithModel: (ApiDictionary *) api;
 
-///props
-@property (nonatomic, readonly) NSArray<NSString *> *translatedWords;
-@property (nonatomic, readonly) NSString *errorMessage;
-/////actions
-//@property (strong, nonatomic) NSString *searchText;
+@property (nonatomic, copy) void (^updateTranslatedWords)(NSArray<NSString *>* updatedWords);
+@property (nonatomic, copy) void (^recivedError)(NSString *errorMessage);
+
 - (void)searchTextUpdated:(NSString *) searchText;
-- (void)changeDelegate:(id<DataUpdater>)delegate;
 
 @end
