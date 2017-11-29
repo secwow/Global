@@ -60,11 +60,24 @@
 - (void)updateTranslatedWords:(NSNotification *)notificationWords
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"translatedWordsUpdated" object:self userInfo:notificationWords.userInfo];
+     NSArray<NSString *> *words = notificationWords.userInfo[@"translatedWords"];
+    
+    if (!words)
+    {
+        return;
+    }
+    self.translatedWords = words;
 }
 
 - (void)didRecivedError:(NSNotification *)error
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"recivedError" object:self userInfo:error.userInfo];
+    NSString *errorMessage = error.userInfo[@"errorMessage"];
+    if (!errorMessage)
+    {
+        return;
+    }
+    self.errorMessage = errorMessage;
 }
 
 - (void)dealloc

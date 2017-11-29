@@ -43,7 +43,8 @@
     {
         if (error)
         {
-            [self sendNotification:@"recivedError" key:@"errorMessage" info:@"Unsupported language"];
+            self.errorMessage = @"Unsupported language";
+            [self sendNotification:@"recivedError" key:@"errorMessage" info:self.errorMessage];
             return;
         }
         
@@ -54,7 +55,8 @@
                      error: &parseError];
         if (parseError)
         {
-            [self sendNotification:@"recivedError" key:@"errorMessage" info:@"We couldn't find anything"];
+            self.errorMessage = @"We couldn't find anything";
+            [self sendNotification:@"recivedError" key:@"errorMessage" info:self.errorMessage];
             return;
         }
         
@@ -84,6 +86,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [self sendNotification:@"translatedWordsUpdated" key:@"translatedWords" info:translatedWords];
+            self.translatedWords = translatedWords;
         });
        
     }];
