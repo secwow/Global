@@ -9,39 +9,21 @@
 #import "ViewController.h"
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
+#import "DataUpdater.h"
 
-@interface ViewController()
+@interface ViewController()<DataUpdater, UITextFieldDelegate>
 
-@property (weak, nonatomic) IBOutlet UITextField *searchField;
+@property (weak, nonatomic) IBOutlet UITextField *searchTextField;
 @property (weak, nonatomic) IBOutlet UITextView *resultField;
 
 @end
 
 @implementation ViewController
 
-- (void)updateData:(NSString *)translatedWord
-{
-    self.resultField.text = translatedWord;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self registerObserver];
-}
-
-- (void) registerObserver
-{
-    [self.viewModel addObserver:self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
-    [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
-}
-
-- (void) unregisterObserver
-{
-    [self.viewModel removeObserver: self forKeyPath:@"translatedWords"];
-    [self.viewModel removeObserver: self forKeyPath:@"errorMessage"];
-    [self.searchField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
+    [self.searchTextField addTarget:self action:@selector(textChanged) forControlEvents:UIControlEventEditingChanged];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -70,14 +52,14 @@
     }
 }
 
-- (void)textFieldDidChange: (UITextField *)textField
+- (void)textChanged
 {
-    [self.viewModel searchTextUpdated: textField.text];
+    [self.viewModel searchTextUpdated:self.searchTextField.text];
 }
 
-- (void)dealloc
+- (void)updateTranslatedWords:(NSArray<NSString *> *)words
 {
-    [self unregisterObserver];
+    self.resultField.text = [words componentsJoinedByString: @"\n"];
 }
 
 @end

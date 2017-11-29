@@ -49,7 +49,7 @@
                     </view>
                     <connections>
                         <outlet property="resultField" destination="XXO-KR-u51" id="zo3-Oh-7YJ"/>
-                        <outlet property="searchField" destination="6IX-8D-FOK" id="Ob1-3y-U9W"/>
+                        <outlet property="searchTextField" destination="6IX-8D-FOK" id="qIQ-YU-gcA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

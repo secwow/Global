@@ -8,6 +8,7 @@
 
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
+#import "DataUpdater.h"
 
 @interface SearchViewModel()
 
@@ -15,6 +16,7 @@
 
 @property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readwrite) NSString *errorMessage;
+@property (nonatomic, weak) id<DataUpdater> delegate;
 
 @end
 
@@ -27,7 +29,6 @@
     if (self != nil)
     {
         self.model = api;
-        [self registerObserver];
     }
     
     return self;
@@ -40,41 +41,19 @@
         return;
     }
     
-    [NSObject cancelPreviousPerformRequestsWithTarget: self.model];
-    [self.model performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
+    [NSObject cancelPreviousPerformRequestsWithTarget: self];
+    [self performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void) translateWord: (NSString *)word
 {
-    if ([keyPath isEqualToString: @"translatedWords"])
-    {
-        self.translatedWords = change[@"new"];
-    }
-    else if ([keyPath isEqualToString: @"errorMessage"])
-    {
-        self.errorMessage = change[@"new"];
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+    [self.model translateWord:word];
 }
 
-- (void)registerObserver
+- (void)changeDelegate:(id<DataUpdater>)delegate
 {
-    [self.model addObserver:self forKeyPath:@"translatedWords" options:NSKeyValueObservingOptionNew context:nil];
-    [self.model addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
-}
-
-- (void)unregisterObserver
-{
-    [self.model removeObserver:self forKeyPath:@"translatedWords"];
-    [self.model removeObserver:self forKeyPath:@"errorMessage"];
-}
-
-- (void)dealloc
-{
-    [self unregisterObserver];
+    self.delegate = delegate;
+    self.model.delegate = delegate;
 }
 
 @end

@@ -35,6 +35,7 @@
 		63556B6D1FC6C8880021A722 /* SearchViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModel.m; sourceTree = "<group>"; };
 		63556B6F1FC6FF230021A722 /* ApiDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApiDictionary.h; sourceTree = "<group>"; };
 		63556B701FC6FF230021A722 /* ApiDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionary.m; sourceTree = "<group>"; };
+		63791E4C1FCDB28900FE37A1 /* DataUpdater.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataUpdater.h; sourceTree = "<group>"; };
 		9E36D462E38C570EAA6CF213 /* Pods-Dictionary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dictionary.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dictionary/Pods-Dictionary.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +102,7 @@
 				63556B6D1FC6C8880021A722 /* SearchViewModel.m */,
 				63556B6F1FC6FF230021A722 /* ApiDictionary.h */,
 				63556B701FC6FF230021A722 /* ApiDictionary.m */,
+				63791E4C1FCDB28900FE37A1 /* DataUpdater.h */,
 			);
 			path = Dictionary;
 			sourceTree = "<group>";
