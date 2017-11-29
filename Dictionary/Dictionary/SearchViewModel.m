@@ -57,7 +57,6 @@
     [self.model translateWord:word];
 }
 
-
 - (void)updateTranslatedWords:(NSNotification *)notificationWords
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"translatedWordsUpdated" object:self userInfo:notificationWords.userInfo];
