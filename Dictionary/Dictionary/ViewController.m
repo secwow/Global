@@ -33,7 +33,9 @@
 
 - (void)updateTranslatedWords:(NSArray<NSString *> *)words
 {
-    self.resultField.text = [words componentsJoinedByString: @"\n"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.resultField.text = [words componentsJoinedByString: @"\n"];
+    });
 }
 
 - (void)didGetError:(NSString *)errorText
@@ -46,8 +48,8 @@
     [alert addAction:ok];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self presentViewController:alert animated:true completion:nil];
+        self.resultField.text = @"";
     });
-    self.resultField.text = @"";
 }
 
 - (void)dealloc

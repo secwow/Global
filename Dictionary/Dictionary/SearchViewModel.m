@@ -10,7 +10,7 @@
 #import "ApiDictionary.h"
 #import "DataUpdater.h"
 
-@interface SearchViewModel()
+@interface SearchViewModel()<DataUpdater>
 
 @property (strong, nonatomic) ApiDictionary *model;
 
@@ -53,7 +53,17 @@
 - (void)changeDelegate:(id<DataUpdater>)delegate
 {
     self.delegate = delegate;
-    self.model.delegate = delegate;
+    self.model.delegate = self;
+}
+
+- (void)didGetError:(NSString *)errorText {
+    self.errorMessage = errorText;
+    [self.delegate didGetError:errorText];
+}
+
+- (void)updateTranslatedWords:(NSArray<NSString *> *)words {
+    self.translatedWords = words;
+    [self.delegate updateTranslatedWords:words];
 }
 
 @end
