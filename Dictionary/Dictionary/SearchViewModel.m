@@ -33,6 +33,7 @@
             {
                 return;
             }
+            self.translatedWords = words;
             strongSelf.updateTranslatedWords(words);
         };
         self.model.recivedError= ^(NSString *errorMessage){
@@ -40,6 +41,7 @@
             {
                 return;
             }
+            self.errorMessage = errorMessage;
             strongSelf.recivedError(errorMessage);
         };
     }
@@ -62,6 +64,5 @@
 {
     [self.model translateWord:word];
 }
-
 
 @end
