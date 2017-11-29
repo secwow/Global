@@ -13,7 +13,6 @@
 
 @property (strong, nonatomic, readonly) NSArray<NSString *>* translatedWords;
 @property (strong, nonatomic, readonly) NSString *errorMessage;
-@property (nonatomic, weak) id<DataUpdater> delegate;
 
 - (void)translateWord:(NSString *)withWord;
 

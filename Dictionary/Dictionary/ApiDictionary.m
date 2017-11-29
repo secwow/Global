@@ -79,7 +79,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate updateTranslatedWords:translatedWords];
+            //[self.delegate updateTranslatedWords:translatedWords];
         });
        
     }];

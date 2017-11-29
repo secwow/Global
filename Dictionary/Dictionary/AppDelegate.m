@@ -37,7 +37,6 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ViewController *viewController = (ViewController *) [storyboard instantiateViewControllerWithIdentifier:@"SearchViewController"];
     viewController.viewModel = viewModel;
-    [viewModel changeDelegate:viewController];
     
     return viewController;
 }

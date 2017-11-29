@@ -16,7 +16,6 @@
 
 @property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readwrite) NSString *errorMessage;
-@property (nonatomic, weak) id<DataUpdater> delegate;
 
 @end
 
