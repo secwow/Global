@@ -45,7 +45,7 @@
     [self performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
 }
 
-- (void) translateWord: (NSString *)word
+- (void) translateWord:(NSString *)word
 {
     [self.model translateWord:word];
 }
