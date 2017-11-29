@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "ApiDictionary.h"
-#import "DataUpdater.h"
 
 @interface SearchViewModel : NSObject
 
@@ -20,6 +19,5 @@
 /////actions
 //@property (strong, nonatomic) NSString *searchText;
 - (void) searchTextUpdated:(NSString *) searchText;
-- (void)changeDelegate:(id<DataUpdater>)delegate;
 
 @end

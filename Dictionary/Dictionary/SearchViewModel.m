@@ -8,7 +8,6 @@
 
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
-#import "DataUpdater.h"
 
 @interface SearchViewModel()
 
@@ -28,13 +27,22 @@
     if (self != nil)
     {
         self.model = api;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchTextUpdated:) name:@"searchTextUpdated" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTranslatedWords:) name:@"translatedWordsUpdated" object:self.model];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecivedError:) name:@"recivedError" object:self.model];
     }
     
     return self;
 }
 
-- (void)searchTextUpdated:(NSString *)searchText
+- (void)searchTextUpdated:(NSNotification *)searchNotification
 {
+    NSString *searchText = searchNotification.userInfo[@"searchText"];
+    if (!searchText)
+    {
+        return;
+    }
+    
     if (searchText.length < 3)
     {
         return;
@@ -44,15 +52,25 @@
     [self performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
 }
 
-- (void) translateWord: (NSString *)word
+- (void)translateWord:(NSString *)word
 {
     [self.model translateWord:word];
 }
 
-- (void)changeDelegate:(id<DataUpdater>)delegate
+
+- (void)updateTranslatedWords:(NSNotification *)notificationWords
 {
-    self.delegate = delegate;
-    self.model.delegate = delegate;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"translatedWordsUpdated" object:self userInfo:notificationWords.userInfo];
+}
+
+- (void)didRecivedError:(NSNotification *)error
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"recivedError" object:self userInfo:error.userInfo];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

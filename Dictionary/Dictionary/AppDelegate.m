@@ -10,7 +10,6 @@
 #import "ApiDictionary.h"
 #import "SearchViewModel.h"
 #import "ViewController.h"
-#import "DataUpdater.h"
 
 @interface AppDelegate()
 

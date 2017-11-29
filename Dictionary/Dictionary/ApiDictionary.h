@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DataUpdater.h"
 
 @interface ApiDictionary : NSObject
 

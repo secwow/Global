@@ -23,6 +23,11 @@
 #define LANGUAGE @"en"
 #define TAGRET_LANGUAGE @"es"
 
+-(void)sendNotification:(NSString *)withName key:(NSString *)withKey info:(NSObject *)information
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:withName object:self userInfo:@{withKey: information}];
+}
+
 - (void) translateWord:(NSString *)withWord
 {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@", LANGUAGE, withWord, TAGRET_LANGUAGE]];
@@ -39,7 +44,7 @@
     {
         if (error)
         {
-            self.errorMessage = @"Unsupported language";
+            [self sendNotification:@"recivedError" key:@"errorMessage" info:@"Unsupported language"];
             return;
         }
         
@@ -50,7 +55,7 @@
                      error: &parseError];
         if (parseError)
         {
-            self.errorMessage = @"We couldn't find anything";
+            [self sendNotification:@"recivedError" key:@"errorMessage" info:@"We couldn't find anything"];
             return;
         }
         
@@ -79,7 +84,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            //[self.delegate updateTranslatedWords:translatedWords];
+            [self sendNotification:@"translatedWordsUpdated" key:@"translatedWords" info:translatedWords];
         });
        
     }];
