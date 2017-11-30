@@ -9,8 +9,8 @@
 
 @interface ApiDictionary()
 
-@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
-@property (strong, nonatomic) NSString *errorMessage;
+//@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
+//@property (strong, nonatomic) NSString *errorMessage;
 
 @end
 
@@ -39,8 +39,8 @@
     {
         if (error)
         {
-            self.errorMessage = @"Unsupported language";
-            [self.delegate didGetError:self.errorMessage];
+           // self.errorMessage = @"Unsupported language";
+            [self.delegate didGetError:@"Unsupported language"];
             return;
         }
         
@@ -51,8 +51,8 @@
                      error: &parseError];
         if (parseError)
         {
-            self.errorMessage = @"We couldn't find anything";
-            [self.delegate didGetError:self.errorMessage];
+            //self.errorMessage = @"We couldn't find anything";
+            [self.delegate didGetError:@"We couldn't find anything"];
             return;
         }
         
@@ -81,7 +81,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.translatedWords = translatedWords;
+           // self.translatedWords = translatedWords;
             [self.delegate updateTranslatedWords:translatedWords];
         });
        

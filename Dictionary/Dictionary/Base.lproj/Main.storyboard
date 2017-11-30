@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Please enter a word here" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="6IX-8D-FOK">
-                                <rect key="frame" x="16" y="54" width="343" height="40"/>
+                                <rect key="frame" x="16" y="54" width="276" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="mdL-CP-sgb"/>
                                 </constraints>
@@ -34,27 +34,36 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" textContentType="name"/>
                             </textView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Ux5-p2-Jb3">
+                                <rect key="frame" x="339" y="64" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="wed-Oc-YrM"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="XXO-KR-u51" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="B9r-tI-IwQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ux5-p2-Jb3" secondAttribute="trailing" constant="16" id="BWx-Fn-FfF"/>
+                            <constraint firstItem="Ux5-p2-Jb3" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="HSX-tc-fFZ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="XXO-KR-u51" secondAttribute="bottom" id="LEp-Qo-oFW"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="XXO-KR-u51" secondAttribute="trailing" constant="16" id="MJG-tJ-tfj"/>
                             <constraint firstItem="6IX-8D-FOK" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="gCd-H3-9FU"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6IX-8D-FOK" secondAttribute="trailing" constant="16" id="nFR-AX-2oN"/>
+                            <constraint firstItem="6IX-8D-FOK" firstAttribute="trailing" secondItem="Ux5-p2-Jb3" secondAttribute="trailing" constant="-67" id="nFR-AX-2oN"/>
                             <constraint firstItem="XXO-KR-u51" firstAttribute="top" secondItem="6IX-8D-FOK" secondAttribute="bottom" constant="8" id="wq1-eu-7X1"/>
                             <constraint firstItem="6IX-8D-FOK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="z7k-Tp-4SH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="loadingIndicator" destination="Ux5-p2-Jb3" id="1hV-j9-sZg"/>
                         <outlet property="resultField" destination="XXO-KR-u51" id="zo3-Oh-7YJ"/>
                         <outlet property="searchTextField" destination="6IX-8D-FOK" id="qIQ-YU-gcA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="85.599999999999994" y="78.710644677661179"/>
+            <point key="canvasLocation" x="85.599999999999994" y="78.325123152709367"/>
         </scene>
     </scenes>
 </document>

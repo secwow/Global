@@ -14,8 +14,8 @@
 
 @property (strong, nonatomic) ApiDictionary *model;
 
-@property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
-@property (nonatomic, readwrite) NSString *errorMessage;
+//@property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
+//@property (nonatomic, readwrite) NSString *errorMessage;
 @property (nonatomic, weak) id<DataUpdater> delegate;
 
 @end
@@ -57,12 +57,12 @@
 }
 
 - (void)didGetError:(NSString *)errorText {
-    self.errorMessage = errorText;
+   // self.errorMessage = errorText;
     [self.delegate didGetError:errorText];
 }
 
 - (void)updateTranslatedWords:(NSArray<NSString *> *)words {
-    self.translatedWords = words;
+   // self.translatedWords = words;
     [self.delegate updateTranslatedWords:words];
 }
 
