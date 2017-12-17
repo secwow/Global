@@ -6,84 +6,168 @@
 //  Copyright © 2017 1. All rights reserved.
 //
 #import "ApiDictionary.h"
+#import "UnitRequest.h"
 
-@interface ApiDictionary()
+@interface Cache: NSObject
 
-@property (strong, nonatomic) NSArray<NSString *>* translatedWords;
-@property (strong, nonatomic) NSString *errorMessage;
+@property (strong, nonatomic) NSString *requestWord;
+@property (strong, nonatomic) NSArray<NSString *> *translatedWords;
+@property (strong, nonatomic) NSString *reverseTranslate;
+-(id)initWithRequestWord:(NSString *)wordToTranslate translatedWords:(NSArray<NSString *>*)words reverseTranslate:(NSString*)reverse;
 
 @end
 
+@implementation Cache
+
+-(id)initWithRequestWord:(NSString *)wordToTranslate translatedWords:(NSArray<NSString *> *)words reverseTranslate:(NSString *)reverse
+{
+    self = [super init];
+    if(self != nil)
+    {
+        self.requestWord = wordToTranslate;
+        self.translatedWords = words;
+        self.reverseTranslate = reverse;
+    }
+    return self;
+}
+
+@end
+
+@interface ApiDictionary()
+
+@property (strong, nonatomic) NSArray<NSString *> *translatedWords;
+@property (strong, nonatomic) NSString *errorMessage;
+@property (strong, nonatomic) NSString *reverseTranslate;
+@property (strong, nonatomic) NSString *requestText;
+@property (nonatomic) NSInteger requestCount;
+@property (nonatomic) State state;
+@property (nonatomic) UnitRequest *currentRequest;
+@property (nonatomic) NSMutableArray<Cache *> *cache;
+
+@end
 
 @implementation ApiDictionary
 
-#import "ApiDictionary.h"
-#define APP_ID @"9436ccf8"
-#define APP_KEY @"c360af3c7857068578608c17e2060ebf"
 #define LANGUAGE @"en"
-#define TAGRET_LANGUAGE @"es"
+#define TARGET_LANGUAGE @"es"
+
+-(instancetype)init
+{
+    self = [super init];
+    if(self != nil)
+    {
+        self.cache = [NSMutableArray new];
+    }
+    return self;
+}
 
 - (void) translateWord:(NSString *)withWord
 {
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@", LANGUAGE, withWord, TAGRET_LANGUAGE]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request setHTTPMethod:@"GET"];
-    
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setValue:APP_ID forHTTPHeaderField:@"app_id"];
-    [request setValue:APP_KEY forHTTPHeaderField:@"app_key"];
-    
-    NSURLSession *session = [NSURLSession sharedSession];
-    
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler: ^(NSData* data, NSURLResponse *response, NSError *error )
+    // Check for equal words in request
+    if (self.requestText == withWord && self.state != FAILED && self.state != CANCELED)
     {
-        if (error)
+        return;
+    }
+    
+    [self cancelRequest];
+    self.state = NEW;
+    self.requestText = withWord;
+    void (^interationBlock)(void) = ^void(void){self.requestCount++;};
+    // Restore state if we already have one before
+    Cache *cache = [self restoreSavedStateWithWord:withWord];
+    if (cache != nil)
+    {
+        [self restoreStateFrom:cache];
+        return;
+    }
+    
+    __weak ApiDictionary *strongSelf = self;
+    CompletionBlock reverseBlock = ^(NSArray<NSString *> *translatedWords, NSString *error){
+
+        if (self.state == CANCELED)
         {
-            self.errorMessage = @"Unsupported language";
             return;
         }
         
-        NSError *parseError = nil;
-        id object = [NSJSONSerialization
-                     JSONObjectWithData: data
-                     options: 0
-                     error: &parseError];
-        if (parseError)
+        if(![self validateResponse:translatedWords errorString:error])
         {
-            self.errorMessage = @"We couldn't find anything";
             return;
         }
         
-        NSMutableArray *translatedWords = [[NSMutableArray alloc] init];
-      
-        if([object isKindOfClass:[NSDictionary class]])
+        strongSelf.reverseTranslate = translatedWords.firstObject;
+        [strongSelf.cache addObject:[[Cache alloc]initWithRequestWord:strongSelf.requestText translatedWords:strongSelf.translatedWords reverseTranslate:strongSelf.reverseTranslate]];
+        strongSelf.state = DONE;
+    };
+    
+    CompletionBlock block = ^(NSArray<NSString *> *translatedWords, NSString *error){        
+        if (self.state == CANCELED)
         {
-            NSDictionary *results = object;
-            NSDictionary *secondary = results[@"results"][0][@"lexicalEntries"][0][@"entries"][0][@"senses"];
-           
-            for(NSDictionary *dictionary in secondary)
-            {
-                
-                for (NSString *key in [dictionary allKeys])
-                {
-                    
-                    if ([key isEqualToString:@"translations"])
-                    {
-                        for (NSDictionary* translate in dictionary[key])
-                        {
-                            [translatedWords addObject: translate[@"text"]];
-                        }
-                    }
-                }
-            }
+            return;
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.translatedWords = translatedWords;
-        });
+        if(![self validateResponse:translatedWords errorString:error])
+        {
+            return;
+        }
+        
+        NSString *wordToReverse = translatedWords.firstObject;
+        strongSelf.translatedWords = translatedWords;
        
-    }];
-    [task resume];
+        UnitRequest *reverseRequest = [[UnitRequest alloc] initRequestWithWord:wordToReverse currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE block:reverseBlock counterBlock:interationBlock];
+        strongSelf.currentRequest = reverseRequest;
+        [reverseRequest makeRequest];
+    };
+    
+    UnitRequest *simpleRequest = [[UnitRequest alloc] initRequestWithWord:withWord currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE block:block counterBlock:interationBlock];
+    self.state = INPROGRESS;
+    self.currentRequest = simpleRequest;
+    [simpleRequest makeRequest];
+   
+}
+
+- (void)cancelRequest
+{
+    [self.currentRequest cancelRequest];
+    self.state = CANCELED;
+    self.errorMessage = @"";
+}
+
+- (Cache *)restoreSavedStateWithWord:(NSString *)word
+{
+    for (Cache *previousRequest in self.cache)
+    {
+        if ([previousRequest.requestWord isEqualToString:word])
+        {
+            return previousRequest;
+        }
+    }
+    return nil;
+}
+
+- (void)restoreStateFrom:(Cache *)cache
+{
+    self.requestText = cache.requestWord;
+    self.reverseTranslate = cache.reverseTranslate;
+    self.translatedWords = cache.translatedWords;
+    self.state = DONE;
+}
+
+- (BOOL)validateResponse:(NSArray<NSString *> *)translatedWords errorString:(NSString *)error
+{
+    if(error != nil)
+    {
+        self.errorMessage = error;
+        self.currentRequest = nil;
+        self.state = FAILED;
+        return false;
+    }
+    
+    if(translatedWords.count == 0)
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 @end

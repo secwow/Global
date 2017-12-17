@@ -16,9 +16,11 @@
 ///props
 @property (nonatomic, readonly) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readonly) NSString *errorMessage;
+@property (nonatomic, readonly) NSString *reversedTranslate;
+@property (nonatomic, readonly) BOOL requestInProgress;
+@property (nonatomic, readonly) NSInteger requestCount;
 
 /////actions
-//@property (strong, nonatomic) NSString *searchText;
 - (void) searchTextUpdated:(NSString *) searchText;
 
 @end

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		632060D71FE534F500AA2BAB /* DetailViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 632060D61FE534F500AA2BAB /* DetailViewModel.m */; };
+		632060DA1FE5350300AA2BAB /* DetailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 632060D91FE5350300AA2BAB /* DetailModel.m */; };
+		632060DD1FE53A4500AA2BAB /* UnitDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 632060DC1FE53A4500AA2BAB /* UnitDictionary.m */; };
+		63208C9C1FE3D26F002F3F87 /* UnitRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 63208C9B1FE3D26F002F3F87 /* UnitRequest.m */; };
+		632355F11FE7048800AB83E4 /* DictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 632355F01FE7048800AB83E4 /* DictionaryTests.m */; };
 		63556B581FC6C6DF0021A722 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B571FC6C6DF0021A722 /* AppDelegate.m */; };
 		63556B5B1FC6C6DF0021A722 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B5A1FC6C6DF0021A722 /* ViewController.m */; };
 		63556B5E1FC6C6DF0021A722 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63556B5C1FC6C6DF0021A722 /* Main.storyboard */; };
@@ -15,12 +20,36 @@
 		63556B661FC6C6DF0021A722 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B651FC6C6DF0021A722 /* main.m */; };
 		63556B6E1FC6C8880021A722 /* SearchViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B6D1FC6C8880021A722 /* SearchViewModel.m */; };
 		63556B711FC6FF230021A722 /* ApiDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B701FC6FF230021A722 /* ApiDictionary.m */; };
+		63AC697B1FD18359008F3079 /* CellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697A1FD18359008F3079 /* CellView.m */; };
+		63AC697E1FD1836F008F3079 /* CellViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697D1FD1836F008F3079 /* CellViewModel.m */; };
+		63AC69841FD1ABF8008F3079 /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC69831FD1ABF8008F3079 /* DetailView.m */; };
 		A20D13CA37E42A94DFA4C129 /* Pods_Dictionary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0570596E42ACB7133D3E3314 /* Pods_Dictionary.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		632355F31FE7048800AB83E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63556B4B1FC6C6DF0021A722 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 63556B521FC6C6DF0021A722;
+			remoteInfo = Dictionary;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0570596E42ACB7133D3E3314 /* Pods_Dictionary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dictionary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		061CCB4B9DB5A26F193CC5CA /* Pods-Dictionary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dictionary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dictionary/Pods-Dictionary.release.xcconfig"; sourceTree = "<group>"; };
+		632060D51FE534F500AA2BAB /* DetailViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewModel.h; sourceTree = "<group>"; };
+		632060D61FE534F500AA2BAB /* DetailViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewModel.m; sourceTree = "<group>"; };
+		632060D81FE5350300AA2BAB /* DetailModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailModel.h; sourceTree = "<group>"; };
+		632060D91FE5350300AA2BAB /* DetailModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailModel.m; sourceTree = "<group>"; };
+		632060DB1FE53A4500AA2BAB /* UnitDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitDictionary.h; sourceTree = "<group>"; };
+		632060DC1FE53A4500AA2BAB /* UnitDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitDictionary.m; sourceTree = "<group>"; };
+		63208C9A1FE3D26F002F3F87 /* UnitRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitRequest.h; sourceTree = "<group>"; };
+		63208C9B1FE3D26F002F3F87 /* UnitRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitRequest.m; sourceTree = "<group>"; };
+		632355EE1FE7048800AB83E4 /* DictionaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DictionaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		632355F01FE7048800AB83E4 /* DictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DictionaryTests.m; sourceTree = "<group>"; };
+		632355F21FE7048800AB83E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63556B531FC6C6DF0021A722 /* Dictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63556B561FC6C6DF0021A722 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		63556B571FC6C6DF0021A722 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -35,10 +64,23 @@
 		63556B6D1FC6C8880021A722 /* SearchViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModel.m; sourceTree = "<group>"; };
 		63556B6F1FC6FF230021A722 /* ApiDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApiDictionary.h; sourceTree = "<group>"; };
 		63556B701FC6FF230021A722 /* ApiDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionary.m; sourceTree = "<group>"; };
+		63AC69791FD18359008F3079 /* CellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CellView.h; sourceTree = "<group>"; };
+		63AC697A1FD18359008F3079 /* CellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CellView.m; sourceTree = "<group>"; };
+		63AC697C1FD1836F008F3079 /* CellViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CellViewModel.h; sourceTree = "<group>"; };
+		63AC697D1FD1836F008F3079 /* CellViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CellViewModel.m; sourceTree = "<group>"; };
+		63AC69821FD1ABF8008F3079 /* DetailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailView.h; sourceTree = "<group>"; };
+		63AC69831FD1ABF8008F3079 /* DetailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
 		9E36D462E38C570EAA6CF213 /* Pods-Dictionary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dictionary.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dictionary/Pods-Dictionary.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		632355EB1FE7048800AB83E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		63556B501FC6C6DF0021A722 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -67,10 +109,35 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		632060D41FE5348000AA2BAB /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				63AC69821FD1ABF8008F3079 /* DetailView.h */,
+				63AC69831FD1ABF8008F3079 /* DetailView.m */,
+				632060D51FE534F500AA2BAB /* DetailViewModel.h */,
+				632060D61FE534F500AA2BAB /* DetailViewModel.m */,
+				632060D81FE5350300AA2BAB /* DetailModel.h */,
+				632060D91FE5350300AA2BAB /* DetailModel.m */,
+				632060DB1FE53A4500AA2BAB /* UnitDictionary.h */,
+				632060DC1FE53A4500AA2BAB /* UnitDictionary.m */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		632355EF1FE7048800AB83E4 /* DictionaryTests */ = {
+			isa = PBXGroup;
+			children = (
+				632355F01FE7048800AB83E4 /* DictionaryTests.m */,
+				632355F21FE7048800AB83E4 /* Info.plist */,
+			);
+			path = DictionaryTests;
+			sourceTree = "<group>";
+		};
 		63556B4A1FC6C6DF0021A722 = {
 			isa = PBXGroup;
 			children = (
 				63556B551FC6C6DF0021A722 /* Dictionary */,
+				632355EF1FE7048800AB83E4 /* DictionaryTests */,
 				63556B541FC6C6DF0021A722 /* Products */,
 				570EB45251820983EB9772D5 /* Pods */,
 				1A667AE44A886C4242BDA390 /* Frameworks */,
@@ -81,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				63556B531FC6C6DF0021A722 /* Dictionary.app */,
+				632355EE1FE7048800AB83E4 /* DictionaryTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +156,8 @@
 		63556B551FC6C6DF0021A722 /* Dictionary */ = {
 			isa = PBXGroup;
 			children = (
+				632060D41FE5348000AA2BAB /* Detail */,
+				63AC69781FD1831B008F3079 /* Cell */,
 				63556B561FC6C6DF0021A722 /* AppDelegate.h */,
 				63556B571FC6C6DF0021A722 /* AppDelegate.m */,
 				63556B591FC6C6DF0021A722 /* ViewController.h */,
@@ -101,13 +171,44 @@
 				63556B6D1FC6C8880021A722 /* SearchViewModel.m */,
 				63556B6F1FC6FF230021A722 /* ApiDictionary.h */,
 				63556B701FC6FF230021A722 /* ApiDictionary.m */,
+				63208C9A1FE3D26F002F3F87 /* UnitRequest.h */,
+				63208C9B1FE3D26F002F3F87 /* UnitRequest.m */,
 			);
 			path = Dictionary;
+			sourceTree = "<group>";
+		};
+		63AC69781FD1831B008F3079 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				63AC69791FD18359008F3079 /* CellView.h */,
+				63AC697A1FD18359008F3079 /* CellView.m */,
+				63AC697C1FD1836F008F3079 /* CellViewModel.h */,
+				63AC697D1FD1836F008F3079 /* CellViewModel.m */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		632355ED1FE7048800AB83E4 /* DictionaryTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 632355F51FE7048800AB83E4 /* Build configuration list for PBXNativeTarget "DictionaryTests" */;
+			buildPhases = (
+				632355EA1FE7048800AB83E4 /* Sources */,
+				632355EB1FE7048800AB83E4 /* Frameworks */,
+				632355EC1FE7048800AB83E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				632355F41FE7048800AB83E4 /* PBXTargetDependency */,
+			);
+			name = DictionaryTests;
+			productName = DictionaryTests;
+			productReference = 632355EE1FE7048800AB83E4 /* DictionaryTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		63556B521FC6C6DF0021A722 /* Dictionary */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63556B691FC6C6DF0021A722 /* Build configuration list for PBXNativeTarget "Dictionary" */;
@@ -137,6 +238,11 @@
 				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = 1;
 				TargetAttributes = {
+					632355ED1FE7048800AB83E4 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 63556B521FC6C6DF0021A722;
+					};
 					63556B521FC6C6DF0021A722 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
@@ -157,11 +263,19 @@
 			projectRoot = "";
 			targets = (
 				63556B521FC6C6DF0021A722 /* Dictionary */,
+				632355ED1FE7048800AB83E4 /* DictionaryTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		632355EC1FE7048800AB83E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		63556B511FC6C6DF0021A722 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,19 +347,42 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		632355EA1FE7048800AB83E4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				632355F11FE7048800AB83E4 /* DictionaryTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		63556B4F1FC6C6DF0021A722 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				63556B5B1FC6C6DF0021A722 /* ViewController.m in Sources */,
 				63556B711FC6FF230021A722 /* ApiDictionary.m in Sources */,
+				632060DA1FE5350300AA2BAB /* DetailModel.m in Sources */,
 				63556B661FC6C6DF0021A722 /* main.m in Sources */,
+				63AC697E1FD1836F008F3079 /* CellViewModel.m in Sources */,
+				632060DD1FE53A4500AA2BAB /* UnitDictionary.m in Sources */,
+				63208C9C1FE3D26F002F3F87 /* UnitRequest.m in Sources */,
 				63556B6E1FC6C8880021A722 /* SearchViewModel.m in Sources */,
+				63AC69841FD1ABF8008F3079 /* DetailView.m in Sources */,
+				63AC697B1FD18359008F3079 /* CellView.m in Sources */,
 				63556B581FC6C6DF0021A722 /* AppDelegate.m in Sources */,
+				632060D71FE534F500AA2BAB /* DetailViewModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		632355F41FE7048800AB83E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 63556B521FC6C6DF0021A722 /* Dictionary */;
+			targetProxy = 632355F31FE7048800AB83E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		63556B5C1FC6C6DF0021A722 /* Main.storyboard */ = {
@@ -267,6 +404,38 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		632355F61FE7048800AB83E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = DX34ZZXSN8;
+				INFOPLIST_FILE = DictionaryTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = dima.DictionaryTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dictionary.app/Dictionary";
+			};
+			name = Debug;
+		};
+		632355F71FE7048800AB83E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = DX34ZZXSN8;
+				INFOPLIST_FILE = DictionaryTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = dima.DictionaryTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dictionary.app/Dictionary";
+			};
+			name = Release;
+		};
 		63556B671FC6C6DF0021A722 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -406,6 +575,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		632355F51FE7048800AB83E4 /* Build configuration list for PBXNativeTarget "DictionaryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				632355F61FE7048800AB83E4 /* Debug */,
+				632355F71FE7048800AB83E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		63556B4E1FC6C6DF0021A722 /* Build configuration list for PBXProject "Dictionary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

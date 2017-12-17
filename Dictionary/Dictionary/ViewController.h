@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SearchViewModel.h"
 
-@interface ViewController  : UIViewController
+@interface ViewController: UIViewController
 
 @property (strong, nonatomic) SearchViewModel *viewModel;
 

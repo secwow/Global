@@ -13,8 +13,11 @@
 
 @property (strong, nonatomic) ApiDictionary *model;
 
-@property (nonatomic, readwrite) NSArray<NSString *> *translatedWords;
-@property (nonatomic, readwrite) NSString *errorMessage;
+@property (nonatomic) NSArray<NSString *> *translatedWords;
+@property (nonatomic) NSString *errorMessage;
+@property (nonatomic) NSInteger requestCount;
+@property (nonatomic) NSString *reversedTranslate;
+@property (nonatomic) BOOL requestInProgress;
 
 @end
 
@@ -27,6 +30,7 @@
     if (self != nil)
     {
         self.model = api;
+        self.requestCount = 0;
         [self registerObserver];
     }
     
@@ -40,19 +44,43 @@
         return;
     }
     
-    [NSObject cancelPreviousPerformRequestsWithTarget: self.model];
-    [self.model performSelector:@selector(translateWord:) withObject:searchText afterDelay:0.5];
+    [NSObject cancelPreviousPerformRequestsWithTarget: self];
+    [self performSelector:@selector(makeRequest:) withObject:searchText afterDelay:0.9];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if ([keyPath isEqualToString: @"translatedWords"])
+    if ([keyPath isEqualToString: @"state"])
     {
-        self.translatedWords = change[@"new"];
+        
+        NSInteger state = ((NSNumber *)change[@"new"]).integerValue;
+        
+        switch (state)
+        {
+            case NEW:
+                break;
+            case INPROGRESS:
+                self.requestInProgress = true;
+                break;
+            case CANCELED:
+                self.requestInProgress = false;
+                self.translatedWords = [NSArray new];
+                self.reversedTranslate = @"";
+                break;
+            case FAILED:
+                self.requestInProgress = false;
+                self.errorMessage = self.model.errorMessage;
+                break;
+            case DONE:
+                self.requestInProgress = false;
+                self.translatedWords = self.model.translatedWords;
+                self.reversedTranslate = self.model.reverseTranslate;
+                break;
+        }
     }
-    else if ([keyPath isEqualToString: @"errorMessage"])
+    else if ([keyPath isEqualToString: @"requestCount"])
     {
-        self.errorMessage = change[@"new"];
+        self.requestCount = self.model.requestCount;
     }
     else
     {
@@ -60,16 +88,21 @@
     }
 }
 
+- (void)makeRequest:(NSString *)requestText
+{
+    [self.model translateWord:requestText];
+}
+
 - (void)registerObserver
 {
-    [self.model addObserver:self forKeyPath:@"translatedWords" options:NSKeyValueObservingOptionNew context:nil];
-    [self.model addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
+    [self.model addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
+    [self.model addObserver:self forKeyPath:@"requestCount" options:NSKeyValueObservingOptionInitial context:nil];
 }
 
 - (void)unregisterObserver
 {
-    [self.model removeObserver:self forKeyPath:@"translatedWords"];
-    [self.model removeObserver:self forKeyPath:@"errorMessage"];
+    [self.model removeObserver:self forKeyPath:@"state"];
+    [self.model removeObserver:self forKeyPath:@"requestCount"];
 }
 
 - (void)dealloc
