@@ -18,6 +18,7 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     [self.viewModel addObserver:self forKeyPath:@"details" options:NSKeyValueObservingOptionNew context:nil];
     [self fillFormWithWord:self.word];
 }
