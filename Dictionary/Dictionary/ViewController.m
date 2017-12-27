@@ -20,7 +20,7 @@
 @interface ViewController()<UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
-@property (weak, nonatomic) IBOutlet UITextField *reversedWord;
+@property (weak, nonatomic) IBOutlet UILabel *reversedWord;
 @property (weak, nonatomic) IBOutlet UILabel *totalRequest;
 @property (weak, nonatomic) IBOutlet UITextField *searchField;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -135,7 +135,6 @@
 {
     CellView *cell = (CellView *)[self.tableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:indexPath];
     [cell configure:self.viewModel.translatedWords[indexPath.row]];
-   
     [cell toggleCellAccessibility:!self.viewModel.requestInProgress];
     
     return cell;

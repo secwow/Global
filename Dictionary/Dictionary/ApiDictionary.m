@@ -8,31 +8,6 @@
 #import "ApiDictionary.h"
 #import "UnitRequest.h"
 
-@interface Cache: NSObject
-
-@property (strong, nonatomic) NSString *requestWord;
-@property (strong, nonatomic) NSArray<NSString *> *translatedWords;
-@property (strong, nonatomic) NSString *reverseTranslate;
--(id)initWithRequestWord:(NSString *)wordToTranslate translatedWords:(NSArray<NSString *>*)words reverseTranslate:(NSString*)reverse;
-
-@end
-
-@implementation Cache
-
--(id)initWithRequestWord:(NSString *)wordToTranslate translatedWords:(NSArray<NSString *> *)words reverseTranslate:(NSString *)reverse
-{
-    self = [super init];
-    if(self != nil)
-    {
-        self.requestWord = wordToTranslate;
-        self.translatedWords = words;
-        self.reverseTranslate = reverse;
-    }
-    return self;
-}
-
-@end
-
 @interface ApiDictionary()
 
 @property (strong, nonatomic) NSArray<NSString *> *translatedWords;
@@ -42,7 +17,6 @@
 @property (nonatomic) NSInteger requestCount;
 @property (nonatomic) State state;
 @property (nonatomic) UnitRequest *currentRequest;
-@property (nonatomic) NSMutableArray<Cache *> *cache;
 
 @end
 
@@ -50,16 +24,6 @@
 
 #define LANGUAGE @"en"
 #define TARGET_LANGUAGE @"es"
-
--(instancetype)init
-{
-    self = [super init];
-    if(self != nil)
-    {
-        self.cache = [NSMutableArray new];
-    }
-    return self;
-}
 
 - (void) translateWord:(NSString *)withWord
 {
@@ -72,57 +36,49 @@
     [self cancelRequest];
     self.state = NEW;
     self.requestText = withWord;
-    void (^interationBlock)(void) = ^void(void){self.requestCount++;};
-    // Restore state if we already have one before
-    Cache *cache = [self restoreSavedStateWithWord:withWord];
-    if (cache != nil)
-    {
-        [self restoreStateFrom:cache];
-        return;
-    }
     
     __weak ApiDictionary *strongSelf = self;
     CompletionBlock reverseBlock = ^(NSArray<NSString *> *translatedWords, NSString *error){
 
-        if (self.state == CANCELED)
+        if (strongSelf.state == CANCELED)
         {
             return;
         }
         
-        if(![self validateResponse:translatedWords errorString:error])
+        if(![strongSelf validateResponse:translatedWords errorString:error])
         {
             return;
         }
         
         strongSelf.reverseTranslate = translatedWords.firstObject;
-        [strongSelf.cache addObject:[[Cache alloc]initWithRequestWord:strongSelf.requestText translatedWords:strongSelf.translatedWords reverseTranslate:strongSelf.reverseTranslate]];
         strongSelf.state = DONE;
     };
     
     CompletionBlock block = ^(NSArray<NSString *> *translatedWords, NSString *error){        
-        if (self.state == CANCELED)
+        if (strongSelf.state == CANCELED)
         {
             return;
         }
         
-        if(![self validateResponse:translatedWords errorString:error])
+        if(![strongSelf validateResponse:translatedWords errorString:error])
         {
             return;
         }
         
         NSString *wordToReverse = translatedWords.firstObject;
         strongSelf.translatedWords = translatedWords;
-       
-        UnitRequest *reverseRequest = [[UnitRequest alloc] initRequestWithWord:wordToReverse currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE block:reverseBlock counterBlock:interationBlock];
+        UnitRequest *reverseRequest = [self createUnitRequestWith:wordToReverse currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE block:reverseBlock];
         strongSelf.currentRequest = reverseRequest;
+        self.requestCount++;
         [reverseRequest makeRequest];
     };
     
-    UnitRequest *simpleRequest = [[UnitRequest alloc] initRequestWithWord:withWord currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE block:block counterBlock:interationBlock];
+    UnitRequest *simpleRequest =  [self createUnitRequestWith:withWord currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE block:block];
+    
     self.state = INPROGRESS;
     self.currentRequest = simpleRequest;
+    self.requestCount++;
     [simpleRequest makeRequest];
-   
 }
 
 - (void)cancelRequest
@@ -130,26 +86,6 @@
     [self.currentRequest cancelRequest];
     self.state = CANCELED;
     self.errorMessage = @"";
-}
-
-- (Cache *)restoreSavedStateWithWord:(NSString *)word
-{
-    for (Cache *previousRequest in self.cache)
-    {
-        if ([previousRequest.requestWord isEqualToString:word])
-        {
-            return previousRequest;
-        }
-    }
-    return nil;
-}
-
-- (void)restoreStateFrom:(Cache *)cache
-{
-    self.requestText = cache.requestWord;
-    self.reverseTranslate = cache.reverseTranslate;
-    self.translatedWords = cache.translatedWords;
-    self.state = DONE;
 }
 
 - (BOOL)validateResponse:(NSArray<NSString *> *)translatedWords errorString:(NSString *)error
@@ -168,6 +104,11 @@
     }
     
     return true;
+}
+
+- (UnitRequest*) createUnitRequestWith:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback
+{
+    return [[UnitRequest alloc]initRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage block:callback];
 }
 
 @end

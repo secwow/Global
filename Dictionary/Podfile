@@ -1,7 +1,8 @@
 # Uncomment the next line to define a global platform for your project
+
 platform :ios, '10.0'
 
 use_frameworks!
-target 'Dictionary' do
-    pod 'ReactiveCocoa', '~> 7.0'
+target 'DictionaryTests' do
+    pod 'OCMock', '~> 3.4'
 end

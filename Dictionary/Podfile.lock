@@ -1,18 +1,12 @@
 PODS:
-  - ReactiveCocoa (7.0.0):
-    - ReactiveSwift (~> 3.0)
-  - ReactiveSwift (3.0.0):
-    - Result (~> 3.2)
-  - Result (3.2.4)
+  - OCMock (3.4.1)
 
 DEPENDENCIES:
-  - ReactiveCocoa (~> 7.0)
+  - OCMock (~> 3.4)
 
 SPEC CHECKSUMS:
-  ReactiveCocoa: 06a54796a36dfc346f082498d08e7a8fb50c4e2f
-  ReactiveSwift: d9fe0db33c1aaabecb092e8de83cf52875c0de6f
-  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
+  OCMock: 2cd0716969bab32a2283ff3a46fd26a8c8b4c5e3
 
-PODFILE CHECKSUM: c6575912e056f368a9e34956333f6476114cd4de
+PODFILE CHECKSUM: 08e37f4d7d4223d7ea4f5029c0738cdff7a223fd
 
 COCOAPODS: 1.3.1

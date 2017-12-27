@@ -18,14 +18,14 @@
 @property (nonatomic, strong) NSString *fromLanguage;
 @property (nonatomic, strong) NSString *toLanguage;
 @property (nonatomic, copy) CompletionBlock block;
-@property (nonatomic, copy) void(^increment)(void);
 @property (strong, nonatomic) NSURLSessionDataTask *task;
 @property (nonatomic) State state;
 
 @end
 
 @implementation UnitRequest
--(id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback counterBlock:(void(^)(void))increment
+
+-(id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback
 {
     self = [super init];
     
@@ -35,7 +35,6 @@
         self.fromLanguage = fromLanguage;
         self.toLanguage = toLanguage;
         self.block = callback;
-        self.increment = increment;
     }
     
     return self;
@@ -60,9 +59,9 @@
     NSURLSession *session = [NSURLSession sharedSession];
     
     __weak UnitRequest *strongSelf = self;
+    strongSelf.state = INPROGRESS;
     self.task = [session dataTaskWithRequest:request completionHandler: ^(NSData* data, NSURLResponse *response, NSError *error)
                  {
-                     strongSelf.increment();
                      if (error)
                      {
                          strongSelf.state = FAILED;
@@ -82,35 +81,43 @@
                          return;
                      }
                      
-                     NSMutableArray *translatedWords = [[NSMutableArray alloc] init];
-                     [NSThread sleepForTimeInterval: 3];
+                    
+                     NSMutableOrderedSet *words = [NSMutableOrderedSet new];
                      if([object isKindOfClass:[NSDictionary class]])
                      {
                          NSDictionary *results = object;
-                         NSDictionary *secondary = results[@"results"][0][@"lexicalEntries"][0][@"entries"][0][@"senses"];
+                         NSDictionary *secondary = results[@"results"][0][@"lexicalEntries"];
                          
                          for(NSDictionary *dictionary in secondary)
                          {
-                             
-                             for (NSString *key in [dictionary allKeys])
+                             for (NSDictionary *entries in dictionary[@"entries"])
                              {
-                                 
-                                 if ([key isEqualToString:@"translations"])
+                                 for (NSDictionary *senses in entries[@"senses"])
                                  {
-                                     for (NSDictionary* translate in dictionary[key])
+                                     for (NSDictionary *subsenses in senses[@"subsenses"])
                                      {
-                                         [translatedWords addObject: translate[@"text"]];
+                                         for (NSDictionary *subsense in subsenses[@"translations"])
+                                         {
+                                             [words addObject:subsense[@"text"]];
+                                         }
                                      }
+                                     
+                                     for (NSDictionary *translation in senses[@"translations"])
+                                     {
+                                         [words addObject:translation[@"text"]];
+                                     }
+                                    
                                  }
                              }
+
                          }
                      }
                      if (strongSelf.state == CANCELED)
                      {
                          return;    
                      }
-                     self.translatedWords = translatedWords;
-                     strongSelf.block(translatedWords, nil);
+                     self.translatedWords = words.array;
+                     strongSelf.block(self.translatedWords, nil);
                  }];
     
     [self.task resume];

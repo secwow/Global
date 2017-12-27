@@ -50,7 +50,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if ([keyPath isEqualToString: @"state"])
+    if ([keyPath isEqualToString:@"state"])
     {
         
         NSInteger state = ((NSNumber *)change[@"new"]).integerValue;
@@ -60,6 +60,7 @@
             case NEW:
                 break;
             case INPROGRESS:
+                self.requestCount++;
                 self.requestInProgress = true;
                 break;
             case CANCELED:
@@ -73,12 +74,26 @@
                 break;
             case DONE:
                 self.requestInProgress = false;
-                self.translatedWords = self.model.translatedWords;
+                
+                // Get only five first elements
+                if(self.model.translatedWords.count > 5)
+                {
+                    NSMutableArray<NSString *>* tempArr = [NSMutableArray new];
+                    for(int i = 0; i < 5; i++)
+                    {
+                        tempArr[i] = self.model.translatedWords[i];
+                    }
+                    self.translatedWords = tempArr;
+                }
+                else
+                {
+                    self.translatedWords = self.model.translatedWords;
+                }
                 self.reversedTranslate = self.model.reverseTranslate;
                 break;
         }
     }
-    else if ([keyPath isEqualToString: @"requestCount"])
+    else if ([keyPath isEqualToString:@"requestCount"])
     {
         self.requestCount = self.model.requestCount;
     }
@@ -101,8 +116,8 @@
 
 - (void)unregisterObserver
 {
-    [self.model removeObserver:self forKeyPath:@"state"];
     [self.model removeObserver:self forKeyPath:@"requestCount"];
+    [self.model removeObserver:self forKeyPath:@"state"];
 }
 
 - (void)dealloc

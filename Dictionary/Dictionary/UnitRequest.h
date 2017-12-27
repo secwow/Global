@@ -7,15 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ApiDictionary.h"
+
+typedef enum State : NSInteger
+{
+    NEW = 0, INPROGRESS = 1, CANCELED = 2, FAILED = 3, DONE = 4
+} State;
+
 @interface UnitRequest : NSObject
 
 @property (nonatomic,readonly) NSString *wordToTranslate;
 @property (assign, nonatomic, readonly) State state;
 
 typedef void (^ CompletionBlock)(NSArray<NSString *> *translatedWords, NSString *error);
-- (id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback counterBlock:(void(^)(void))increment;
+- (id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback;
 - (void)makeRequest;
 - (void)cancelRequest;
+
+
 
 @end

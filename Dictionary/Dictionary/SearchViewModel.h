@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ApiDictionary.h"
 
-@interface SearchViewModel : NSObject
+@interface SearchViewModel: NSObject
 
 - (id) initWithModel: (ApiDictionary *) api;
 
