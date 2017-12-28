@@ -34,7 +34,7 @@
 
 - (void)testStateFlow
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"The number of requests after cancellation must be 3"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"The model state should changed to inprogress and after 2 seconds to done"];
     
     [self.model translateWord:@"five"];
     XCTAssert(self.model.state == INPROGRESS);
