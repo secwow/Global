@@ -21,6 +21,8 @@
 		63556B661FC6C6DF0021A722 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B651FC6C6DF0021A722 /* main.m */; };
 		63556B6E1FC6C8880021A722 /* SearchViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B6D1FC6C8880021A722 /* SearchViewModel.m */; };
 		63556B711FC6FF230021A722 /* ApiDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B701FC6FF230021A722 /* ApiDictionary.m */; };
+		635D72A11FF436D600A056E2 /* ApiDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */; };
+		635D72A41FF43B9A00A056E2 /* UnitRequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */; };
 		639AAE8B1FEFB63600C3E73F /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 639AAE8A1FEFB63600C3E73F /* OCMock.framework */; };
 		63AC697B1FD18359008F3079 /* CellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697A1FD18359008F3079 /* CellView.m */; };
 		63AC697E1FD1836F008F3079 /* CellViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697D1FD1836F008F3079 /* CellViewModel.m */; };
@@ -68,6 +70,9 @@
 		63556B6D1FC6C8880021A722 /* SearchViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModel.m; sourceTree = "<group>"; };
 		63556B6F1FC6FF230021A722 /* ApiDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApiDictionary.h; sourceTree = "<group>"; };
 		63556B701FC6FF230021A722 /* ApiDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionary.m; sourceTree = "<group>"; };
+		635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionaryTests.m; sourceTree = "<group>"; };
+		635D72A21FF43B9A00A056E2 /* UnitRequestTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitRequestTest.h; sourceTree = "<group>"; };
+		635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitRequestTest.m; sourceTree = "<group>"; };
 		639AAE8A1FEFB63600C3E73F /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "../../Downloads/weather3/iOS framework/OCMock.framework"; sourceTree = "<group>"; };
 		63AC69791FD18359008F3079 /* CellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CellView.h; sourceTree = "<group>"; };
 		63AC697A1FD18359008F3079 /* CellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CellView.m; sourceTree = "<group>"; };
@@ -136,6 +141,7 @@
 		632355EF1FE7048800AB83E4 /* DictionaryTests */ = {
 			isa = PBXGroup;
 			children = (
+				635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */,
 				632355F01FE7048800AB83E4 /* DictionaryTests.m */,
 				632355F21FE7048800AB83E4 /* Info.plist */,
 			);
@@ -184,6 +190,8 @@
 				63208C9B1FE3D26F002F3F87 /* UnitRequest.m */,
 				63243F111FF2DA0500B084EC /* ApiDictionaryTestApi.h */,
 				63243F121FF2DA0500B084EC /* ApiDictionaryTestApi.m */,
+				635D72A21FF43B9A00A056E2 /* UnitRequestTest.h */,
+				635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */,
 			);
 			path = Dictionary;
 			sourceTree = "<group>";
@@ -358,6 +366,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				635D72A11FF436D600A056E2 /* ApiDictionaryTests.m in Sources */,
 				632355F11FE7048800AB83E4 /* DictionaryTests.m in Sources */,
 				63243F161FF2F70E00B084EC /* ApiDictionaryTestApi.m in Sources */,
 			);
@@ -378,6 +387,7 @@
 				63AC69841FD1ABF8008F3079 /* DetailView.m in Sources */,
 				63AC697B1FD18359008F3079 /* CellView.m in Sources */,
 				63556B581FC6C6DF0021A722 /* AppDelegate.m in Sources */,
+				635D72A41FF43B9A00A056E2 /* UnitRequestTest.m in Sources */,
 				632060D71FE534F500AA2BAB /* DetailViewModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

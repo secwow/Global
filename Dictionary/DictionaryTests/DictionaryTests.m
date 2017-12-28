@@ -11,7 +11,6 @@
 #import "SearchViewModel.h"
 #import "ViewController.h"
 #import "ApiDictionaryTestApi.h"
-#import <OCMock/OCMock.h>
     
 @interface DictionaryTests : XCTestCase
 @property (strong, nonatomic) ApiDictionary *model;
@@ -118,6 +117,20 @@
             XCTAssert(self.model.state == DONE);
             [expectation fulfill];
         });
+    });
+    [self waitForExpectationsWithTimeout:4 handler:nil];
+}
+
+- (void)testError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"After send message \"error\" we should return \"Error test\" "];
+    
+    [self.viewModel searchTextUpdated:@"error"];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        XCTAssert(self.model.state == FAILED);
+        XCTAssert([self.model.errorMessage isEqualToString:@"Error test"]);
+        [expectation fulfill];
     });
     [self waitForExpectationsWithTimeout:4 handler:nil];
 }
