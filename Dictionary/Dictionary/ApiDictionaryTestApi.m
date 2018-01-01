@@ -13,7 +13,9 @@
 
 - (UnitRequest*) createUnitRequestWith:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback
 {
-    return [[UnitRequestTest alloc]initRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage block:callback];
+    UnitRequestTest *request = [[UnitRequestTest alloc]initRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage block:callback];
+    request.requestDelay = self.requestDelay;
+    return request;
 }
 
 @end

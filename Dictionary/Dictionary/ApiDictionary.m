@@ -85,7 +85,7 @@
 {
     [self.currentRequest cancelRequest];
     self.state = CANCELED;
-    self.errorMessage = @"";
+    self.errorMessage = nil;
 }
 
 - (BOOL)validateResponse:(NSArray<NSString *> *)translatedWords errorString:(NSString *)error

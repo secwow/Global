@@ -26,7 +26,7 @@
 {
     self.state = INPROGRESS;
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, self.requestDelay * NSEC_PER_SEC), dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
         if (self.state == CANCELED)
         {
             return;
@@ -34,6 +34,7 @@
         if([self.wordToTranslate isEqualToString:@"error"])
         {
             self.block(nil, @"Error test");
+            return;
         }
         
         self.translatedWords = [self.wordToTranslate isEqualToString:@"five"] ? @[@"cinco", @"ikdsa",@"finosa",@"quatro",@"cinco",@"cinco",@"cinco",@"cinco",@"cinco"] : @[@"five"];

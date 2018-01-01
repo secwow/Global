@@ -31,6 +31,7 @@
     {
         self.model = api;
         self.requestCount = 0;
+        self.throttlingDelay = 0.9;
         [self registerObserver];
     }
     
@@ -45,7 +46,7 @@
     }
     
     [NSObject cancelPreviousPerformRequestsWithTarget: self];
-    [self performSelector:@selector(makeRequest:) withObject:searchText afterDelay:0.9];
+    [self performSelector:@selector(makeRequest:) withObject:searchText afterDelay:self.throttlingDelay];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -89,6 +90,7 @@
                 {
                     self.translatedWords = self.model.translatedWords;
                 }
+                
                 self.reversedTranslate = self.model.reverseTranslate;
                 break;
         }

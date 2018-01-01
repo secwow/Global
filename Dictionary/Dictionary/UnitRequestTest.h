@@ -9,5 +9,5 @@
 #import "ApiDictionary.h"
 
 @interface UnitRequestTest : UnitRequest
-
+@property (nonatomic) NSTimeInterval requestDelay;
 @end

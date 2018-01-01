@@ -19,6 +19,7 @@
 @property (nonatomic, readonly) NSString *reversedTranslate;
 @property (nonatomic, readonly) BOOL requestInProgress;
 @property (nonatomic, readonly) NSInteger requestCount;
+@property (nonatomic) NSTimeInterval throttlingDelay;
 
 /////actions
 - (void) searchTextUpdated:(NSString *) searchText;
