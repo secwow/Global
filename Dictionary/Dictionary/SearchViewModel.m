@@ -80,10 +80,7 @@
                 if(self.model.translatedWords.count > 5)
                 {
                     NSMutableArray<NSString *>* tempArr = [NSMutableArray new];
-                    for(int i = 0; i < 5; i++)
-                    {
-                        tempArr[i] = self.model.translatedWords[i];
-                    }
+                    [tempArr addObject:self.model.translatedWords.firstObject];
                     self.translatedWords = tempArr;
                 }
                 else
