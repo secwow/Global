@@ -18,7 +18,11 @@
 @property (nonatomic) NSInteger requestCount;
 @property (nonatomic) NSString *reversedTranslate;
 @property (nonatomic) BOOL requestInProgress;
-
+@property (nonatomic) RACSignal *translatedWordsSignal;
+@property (nonatomic) RACSignal *errorMessageSignal;
+@property (nonatomic) RACSignal *reversedTranslateSignal;
+@property (nonatomic) RACSignal *requestInProgressSignal;
+@property (nonatomic) RACSignal *requestCountSignal;
 @end
 
 @implementation SearchViewModel

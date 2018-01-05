@@ -13,7 +13,8 @@
 #import "DetailView.h"
 #import "DetailModel.h"
 #import "DetailViewModel.h"
-
+#import "ApiDictionaryTestApi.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 #define reuseIdentifier @"cellView"
 
@@ -44,22 +45,31 @@
 
 - (void) registerObserver
 {
-    [self.viewModel addObserver:self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"reversedTranslate" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"requestInProgress" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"requestCount" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
-    [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
-}
-
-- (void) unregisterObserver
-{
-    [self.viewModel removeObserver:self forKeyPath:@"translatedWords"];
-    [self.viewModel removeObserver:self forKeyPath:@"errorMessage"];
-    [self.viewModel removeObserver:self forKeyPath:@"requestCount"];
-    [self.viewModel removeObserver:self forKeyPath:@"requestInProgress"];
-    [self.viewModel removeObserver:self forKeyPath:@"reversedTranslate"];
-    [self.searchField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
+    self.viewModel.searchTextSignal = self.searchField.rac_textSignal;
+    
+    [[self.viewModel.translatedWordsSignal deliverOnMainThread]
+     subscribeNext:^(NSArray<NSString *> *translatedWords){
+         
+         [self.tableView reloadData];
+     }];
+    
+    [[self.viewModel.reversedTranslateSignal deliverOnMainThread]
+     subscribeNext:^(NSString *reverseTranslate){
+         NSLog(@"ITS WORK");
+     }];
+    
+    [[self.viewModel.requestInProgressSignal deliverOnMainThread]
+     subscribeNext:^(NSNumber *requestInProgress){
+         NSLog(@"ITS WORK");
+     }];
+    [[self.viewModel.requestCountSignal deliverOnMainThread]
+     subscribeNext:^(NSNumber *requestCount){
+         NSLog(@"ITS WORK");
+     }];
+    [[self.viewModel.errorMessageSignal deliverOnMainThread]
+     subscribeNext:^(NSString *errorMessage){
+         NSLog(@"ITS WORK");
+     }];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -67,7 +77,7 @@
     if ([keyPath isEqualToString: @"translatedWords"])
     {
          dispatch_async(dispatch_get_main_queue(), ^{
-             [self.tableView reloadData];
+             
          });
     }
     else if ([keyPath isEqualToString: @"reversedTranslate"])

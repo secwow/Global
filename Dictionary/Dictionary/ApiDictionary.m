@@ -69,8 +69,9 @@
         strongSelf.translatedWords = translatedWords;
         UnitRequest *reverseRequest = [self createUnitRequestWith:wordToReverse currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE block:reverseBlock];
         strongSelf.currentRequest = reverseRequest;
-        self.requestCount++;
+        strongSelf.requestCount++;
         [reverseRequest makeRequest];
+        strongSelf.currentRequest = nil;
     };
     
     UnitRequest *simpleRequest =  [self createUnitRequestWith:withWord currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE block:block];
@@ -83,9 +84,11 @@
 
 - (void)cancelRequest
 {
-    [self.currentRequest cancelRequest];
-    self.state = CANCELED;
-    self.errorMessage = nil;
+
+        [self.currentRequest cancelRequest];
+        self.state = CANCELED;
+        self.errorMessage = nil;
+  
 }
 
 - (BOOL)validateResponse:(NSArray<NSString *> *)translatedWords errorString:(NSString *)error
