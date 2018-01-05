@@ -14,7 +14,7 @@
 - (id) initWithModel: (ApiDictionary *) api;
 
 //props
-@property (nonatomic, readonly) RACSignal *translatedWordsSignal;
+@property (nonatomic) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readonly) RACSignal *errorMessageSignal;
 @property (nonatomic, readonly) RACSignal *reversedTranslateSignal;
 @property (nonatomic, readonly) RACSignal *requestInProgressSignal;

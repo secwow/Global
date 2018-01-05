@@ -47,20 +47,24 @@
 {
     self.viewModel.searchTextSignal = self.searchField.rac_textSignal;
     
-    [[self.viewModel.translatedWordsSignal deliverOnMainThread]
+    [[RACObserve(self.viewModel, translatedWords) deliverOnMainThread]
      subscribeNext:^(NSArray<NSString *> *translatedWords){
-         
          [self.tableView reloadData];
      }];
     
     [[self.viewModel.reversedTranslateSignal deliverOnMainThread]
      subscribeNext:^(NSString *reverseTranslate){
-         NSLog(@"ITS WORK");
+         
+         self.reversedWord.text = reverseTranslate;
+         
      }];
     
     [[self.viewModel.requestInProgressSignal deliverOnMainThread]
      subscribeNext:^(NSNumber *requestInProgress){
-         NSLog(@"ITS WORK");
+         
+         requestInProgress ? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
+         [self.tableView reloadData];
+         
      }];
     [[self.viewModel.requestCountSignal deliverOnMainThread]
      subscribeNext:^(NSNumber *requestCount){
@@ -84,7 +88,7 @@
     {
         NSString *reversedTranslate = change[@"new"];
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.reversedWord.text = reversedTranslate;
+           
         });
     }
     else if ([keyPath isEqualToString: @"requestInProgress"])
@@ -93,15 +97,7 @@
         BOOL requestInProgress = [requestInProgressNUM boolValue];
          dispatch_async(dispatch_get_main_queue(), ^{
             self.tableView.userInteractionEnabled = !requestInProgress;
-            if (requestInProgress)
-            {
-                [self.loadingView startAnimating];
-            }
-            else
-            {
-                [self.loadingView stopAnimating];
-            }
-            [self.tableView reloadData];
+            
         });
     }
     else if ([keyPath isEqualToString: @"requestCount"])
@@ -129,16 +125,6 @@
     {
         [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
     }
-}
-
-- (void)textFieldDidChange: (UITextField *)textField
-{
-    [self.viewModel searchTextUpdated: textField.text];
-}
-
-- (void)dealloc
-{
-    [self unregisterObserver];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
