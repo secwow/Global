@@ -13,7 +13,7 @@
 #import "DetailView.h"
 #import "DetailModel.h"
 #import "DetailViewModel.h"
-
+#import <ReactiveObjC/ReactiveObjC.h>
 
 #define reuseIdentifier @"cellView"
 
@@ -44,6 +44,7 @@
 
 - (void) registerObserver
 {
+    
     [self.viewModel addObserver:self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
     [self.viewModel addObserver:self forKeyPath: @"reversedTranslate" options: NSKeyValueObservingOptionNew context: nil];
     [self.viewModel addObserver:self forKeyPath: @"requestInProgress" options: NSKeyValueObservingOptionNew context: nil];

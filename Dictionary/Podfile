@@ -6,3 +6,7 @@ use_frameworks!
 target 'DictionaryTests' do
     pod 'OCMock', '~> 3.4'
 end
+
+target 'Dictionary' do
+    pod 'ReactiveObjC', '~> 3.1'
+end
