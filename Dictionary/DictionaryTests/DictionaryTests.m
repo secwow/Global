@@ -97,13 +97,13 @@
 
 - (void)testTopFiveTranslates
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"If we have more than five translated words we must show only top 5"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"If we have more than five translated words we must show only top 1"];
 
     [self.viewModel searchTextUpdated:@"five"];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         XCTAssert(self.model.translatedWords.count > 5);
-        XCTAssert(self.viewModel.translatedWords.count == 5);
+        XCTAssert(self.viewModel.translatedWords.count == 1);
         [expectation fulfill];
     });
     [self waitForExpectationsWithTimeout:4 handler:nil];
