@@ -8,6 +8,7 @@
 
 #import "SearchViewModel.h"
 #import "ApiDictionary.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface SearchViewModel()
 
@@ -18,11 +19,7 @@
 @property (nonatomic) NSInteger requestCount;
 @property (nonatomic) NSString *reversedTranslate;
 @property (nonatomic) BOOL requestInProgress;
-@property (nonatomic) RACSignal *translatedWordsSignal;
-@property (nonatomic) RACSignal *errorMessageSignal;
-@property (nonatomic) RACSignal *reversedTranslateSignal;
-@property (nonatomic) RACSignal *requestInProgressSignal;
-@property (nonatomic) RACSignal *requestCountSignal;
+
 @end
 
 @implementation SearchViewModel
@@ -36,10 +33,39 @@
         self.model = api;
         self.requestCount = 0;
         self.throttlingDelay = 0.9;
-        [self registerObserver];
+        [self bindModel];
     }
     
     return self;
+}
+
+-(void)bindModel
+{
+    @weakify(self);
+    [RACObserve(self.model, requestCount) subscribeNext:^(NSNumber *requestCount){
+        @strongify(self);
+        self.updateRequestCount([requestCount integerValue]);
+    }];
+    
+    [RACObserve(self.model, requestInProgress) subscribeNext:^(NSNumber *requestInProgress){
+        @strongify(self);
+        self.updateRequestInProgress([requestInProgress boolValue]);
+    }];
+    
+    [RACObserve(self.model, reverseTranslate) subscribeNext:^(NSString *reverseTranslate){
+        @strongify(self);
+        self.updateReverseTranslate(reverseTranslate);
+    }];
+    
+    [RACObserve(self.model, translatedWords) subscribeNext:^(NSArray<NSString *> *translatedWords){
+        @strongify(self);
+        self.updateTranslatedWords(translatedWords);
+    }];
+    
+    [RACObserve(self.model, errorMessage) subscribeNext:^(NSString *errorMessage){
+        @strongify(self);
+        self.updateErrorMessage(errorMessage);
+    }];
 }
 
 - (void)searchTextUpdated:(NSString *)searchText
@@ -51,59 +77,6 @@
     
     [NSObject cancelPreviousPerformRequestsWithTarget: self];
     [self performSelector:@selector(makeRequest:) withObject:searchText afterDelay:self.throttlingDelay];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"state"])
-    {
-        
-        NSInteger state = ((NSNumber *)change[@"new"]).integerValue;
-        
-        switch (state)
-        {
-            case NEW:
-                break;
-            case INPROGRESS:
-                self.requestCount++;
-                self.requestInProgress = true;
-                break;
-            case CANCELED:
-                self.requestInProgress = false;
-                self.translatedWords = [NSArray new];
-                self.reversedTranslate = @"";
-                break;
-            case FAILED:
-                self.requestInProgress = false;
-                self.errorMessage = self.model.errorMessage;
-                break;
-            case DONE:
-                self.requestInProgress = false;
-                
-                // Get only five first elements
-                if(self.model.translatedWords.count > 5)
-                {
-                    NSMutableArray<NSString *>* tempArr = [NSMutableArray new];
-                    [tempArr addObject:self.model.translatedWords.firstObject];
-                    self.translatedWords = tempArr;
-                }
-                else
-                {
-                    self.translatedWords = self.model.translatedWords;
-                }
-                
-                self.reversedTranslate = self.model.reverseTranslate;
-                break;
-        }
-    }
-    else if ([keyPath isEqualToString:@"requestCount"])
-    {
-        self.requestCount = self.model.requestCount;
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 - (void)makeRequest:(NSString *)requestText

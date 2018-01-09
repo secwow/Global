@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UnitRequest.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface ApiDictionary: NSObject
 
@@ -16,7 +17,9 @@
 @property (strong, nonatomic, readonly) NSString *errorMessage;
 @property (nonatomic, readonly) NSInteger requestCount;
 @property (nonatomic, readonly) State state;
+@property (nonatomic, readonly) BOOL requestInProgress;
+@property (nonatomic) RACSignal *validSearchTextSignal;
 
-- (void)translateWord:(NSString *)withWord;
-
+- (void)bindModel;
+- (void)translateWord:(NSString *)searchText;
 @end

@@ -18,7 +18,7 @@
 
 #define reuseIdentifier @"cellView"
 
-@interface ViewController()<UITableViewDelegate, UITableViewDataSource>
+@interface ViewController()<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
 @property (weak, nonatomic) IBOutlet UILabel *reversedWord;
@@ -33,9 +33,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self registerObserver];
+    [self setupClosures];
     [self setupTableView];
+    self.searchField.delegate = self;
 }
+
 
 - (void)setupTableView
 {
@@ -43,88 +45,86 @@
     self.tableView.dataSource = self;
 }
 
-- (void) registerObserver
+- (void)setupClosures
 {
-    self.viewModel.searchTextSignal = self.searchField.rac_textSignal;
+    @weakify(self);
+    self.viewModel.updateErrorMessage = ^(NSString *errorMessage){
+            @strongify(self);
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [alert dismissViewControllerAnimated:true completion:nil];
+            }];
+            [alert addAction:ok];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                  [self presentViewController:alert animated:true completion:nil];
+            });
+    };
+    self.viewModel.updateRequestCount = ^(NSInteger requestCount){
+        @strongify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.totalRequest.text = [@(requestCount) stringValue];
+        });
+    };
+    self.viewModel.updateTranslatedWords = ^(NSArray<NSString *> *translatedWords){
+        @strongify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+             [self.tableView reloadData];
+        });
+    };
+    self.viewModel.updateReverseTranslate = ^(NSString *reversedTranslate){
+        @strongify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.reversedWord.text = reversedTranslate;
+        });
+    };
     
+    self.viewModel.updateRequestInProgress = ^(BOOL requestInProgress){
+        @strongify(self);
+        requestInProgress ? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
+        [self.tableView reloadData];
+    };
+}
+
+
+- (void) bindViewModel
+{
+    
+
     [[RACObserve(self.viewModel, translatedWords) deliverOnMainThread]
      subscribeNext:^(NSArray<NSString *> *translatedWords){
+
          [self.tableView reloadData];
      }];
-    
-    [[self.viewModel.reversedTranslateSignal deliverOnMainThread]
+
+    [RACObserve(self.viewModel, reversedTranslate)
      subscribeNext:^(NSString *reverseTranslate){
-         
          self.reversedWord.text = reverseTranslate;
-         
      }];
-    
-    [[self.viewModel.requestInProgressSignal deliverOnMainThread]
+
+    [[RACObserve(self.viewModel, requestInProgress) deliverOnMainThread]
      subscribeNext:^(NSNumber *requestInProgress){
-         
-         requestInProgress ? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
+         [requestInProgress boolValue]? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
          [self.tableView reloadData];
-         
      }];
-    [[self.viewModel.requestCountSignal deliverOnMainThread]
+
+    [[RACObserve(self.viewModel, requestCount) deliverOnMainThread]
      subscribeNext:^(NSNumber *requestCount){
          NSLog(@"ITS WORK");
      }];
-    [[self.viewModel.errorMessageSignal deliverOnMainThread]
-     subscribeNext:^(NSString *errorMessage){
-         NSLog(@"ITS WORK");
-     }];
-}
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString: @"translatedWords"])
-    {
-         dispatch_async(dispatch_get_main_queue(), ^{
-             
-         });
-    }
-    else if ([keyPath isEqualToString: @"reversedTranslate"])
-    {
-        NSString *reversedTranslate = change[@"new"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-        });
-    }
-    else if ([keyPath isEqualToString: @"requestInProgress"])
-    {
-        NSNumber *requestInProgressNUM = change[@"new"];
-        BOOL requestInProgress = [requestInProgressNUM boolValue];
-         dispatch_async(dispatch_get_main_queue(), ^{
-            self.tableView.userInteractionEnabled = !requestInProgress;
-            
-        });
-    }
-    else if ([keyPath isEqualToString: @"requestCount"])
-    {
-        NSInteger count = [[change valueForKey: @"new"] integerValue];
-        dispatch_async(dispatch_get_main_queue(), ^{
-             self.totalRequest.text = [@(count) stringValue];
-        });
-    }
-    else if ([keyPath isEqualToString:@"errorMessage"])
-    {
-        NSString *error = [change valueForKey: @"new"];
-       
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:error preferredStyle:UIAlertControllerStyleAlert];
-        
+    [[[RACObserve(self.viewModel, errorMessage)
+    map:^id(NSString *errorMessage){
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
             [alert dismissViewControllerAnimated:true completion:nil];
         }];
         [alert addAction:ok];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self presentViewController:alert animated:true completion:nil];
-        });
-    }
-    else
-    {
-        [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-    }
+        return alert;
+    }]
+    deliverOnMainThread]
+    subscribeNext:^(UIAlertController *alertController){
+        [self presentViewController:alertController animated:true completion:nil];
+    }];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath

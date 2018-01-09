@@ -7,6 +7,7 @@
 //
 #import "ApiDictionary.h"
 #import "UnitRequest.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface ApiDictionary()
 
@@ -17,6 +18,7 @@
 @property (nonatomic) NSInteger requestCount;
 @property (nonatomic) State state;
 @property (nonatomic) UnitRequest *currentRequest;
+@property (nonatomic) BOOL requestInProgress;
 
 @end
 
@@ -25,70 +27,77 @@
 #define LANGUAGE @"en"
 #define TARGET_LANGUAGE @"es"
 
-- (void) translateWord:(NSString *)withWord
+- (void)translateWord:(NSString *)searchText
 {
-    // Check for equal words in request
-    if (self.requestText == withWord && self.state != FAILED && self.state != CANCELED)
+    self.requestInProgress = false;
+    [[[[self createRequestSignalWithWordToTranslate:searchText currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE]
+         doNext:^(id value)
+         {
+             self.requestCount++;
+         }]
+        doError:^(id value){
+            self.requestCount++;
+        }]
+        subscribeNext:^(NSArray<NSString *> *translatedWord){
+            self.translatedWords = translatedWord;
+            [[[[self createRequestSignalWithWordToTranslate:translatedWord.firstObject currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE]
+               doNext:^(id value){
+                   self.requestCount++;
+               }]
+              doError:^(id value){
+                  self.requestCount++;
+              }]
+             subscribeNext:^(NSArray<NSString *> *translatedWord){
+                 self.reverseTranslate = translatedWord.firstObject;
+                 self.requestInProgress = false;
+             } error:^(NSError *error){
+                 self.errorMessage = error.localizedDescription;
+             }];
+        } error:^(NSError *error){
+            self.errorMessage = error.localizedDescription;
+        }];
+}
+- (void)bindModel
+{
+    [[[[[self.validSearchTextSignal
+    doNext:^(id value){
+        self.requestInProgress = false;
+    }]
+    flattenMap:^RACSignal*(NSString *searchText){
+        return [self createRequestSignalWithWordToTranslate:searchText currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE];
+    }]
+    doNext:^(id value)
     {
-        return;
-    }
-    
-    [self cancelRequest];
-    self.state = NEW;
-    self.requestText = withWord;
-    
-    __weak ApiDictionary *strongSelf = self;
-    CompletionBlock reverseBlock = ^(NSArray<NSString *> *translatedWords, NSString *error){
-
-        if (strongSelf.state == CANCELED)
-        {
-            return;
-        }
-        
-        if(![strongSelf validateResponse:translatedWords errorString:error])
-        {
-            return;
-        }
-        
-        strongSelf.reverseTranslate = translatedWords.firstObject;
-        strongSelf.state = DONE;
-    };
-    
-    CompletionBlock block = ^(NSArray<NSString *> *translatedWords, NSString *error){        
-        if (strongSelf.state == CANCELED)
-        {
-            return;
-        }
-        
-        if(![strongSelf validateResponse:translatedWords errorString:error])
-        {
-            return;
-        }
-        
-        NSString *wordToReverse = translatedWords.firstObject;
-        strongSelf.translatedWords = translatedWords;
-        UnitRequest *reverseRequest = [self createUnitRequestWith:wordToReverse currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE block:reverseBlock];
-        strongSelf.currentRequest = reverseRequest;
-        strongSelf.requestCount++;
-        [reverseRequest makeRequest];
-        strongSelf.currentRequest = nil;
-    };
-    
-    UnitRequest *simpleRequest =  [self createUnitRequestWith:withWord currentLanguage:LANGUAGE targetLanguage:TARGET_LANGUAGE block:block];
-    
-    self.state = INPROGRESS;
-    self.currentRequest = simpleRequest;
-    self.requestCount++;
-    [simpleRequest makeRequest];
+        self.requestCount++;
+    }]
+    doError:^(id value){
+        self.requestCount++;
+    }]
+    subscribeNext:^(NSArray<NSString *> *translatedWord){
+        self.translatedWords = translatedWord;
+        [[[[self createRequestSignalWithWordToTranslate:translatedWord.firstObject currentLanguage:TARGET_LANGUAGE targetLanguage:LANGUAGE]
+        doNext:^(id value){
+           self.requestCount++;
+        }]
+        doError:^(id value){
+          self.requestCount++;
+        }]
+        subscribeNext:^(NSArray<NSString *> *translatedWord){
+            self.reverseTranslate = translatedWord.firstObject;
+            self.requestInProgress = false;
+        } error:^(NSError *error){
+            self.errorMessage = error.localizedDescription;
+        }];
+    } error:^(NSError *error){
+        self.errorMessage = error.localizedDescription;
+    }];
 }
 
 - (void)cancelRequest
 {
-
-        [self.currentRequest cancelRequest];
-        self.state = CANCELED;
-        self.errorMessage = nil;
-  
+    [self.currentRequest cancelRequest];
+    self.state = CANCELED;
+    self.errorMessage = nil;
 }
 
 - (BOOL)validateResponse:(NSArray<NSString *> *)translatedWords errorString:(NSString *)error
@@ -107,6 +116,27 @@
     }
     
     return true;
+}
+
+- (RACSignal *)createRequestSignalWithWordToTranslate:(NSString *)word currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage
+{
+ 
+    return  [RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
+             {
+                 [self.currentRequest cancelRequest];
+                 self.currentRequest = [self createUnitRequestWith:word currentLanguage:fromLanguage targetLanguage:toLanguage block:^(NSArray<NSString *> *translatedWords, NSError *error){
+                     if(error != nil)
+                     {
+                         [subscriber sendError:error];
+                     }
+                     else
+                     {
+                         [subscriber sendNext:translatedWords];
+                     }
+                 }];
+                 [self.currentRequest makeRequest];
+                 return nil;
+             }];
 }
 
 - (UnitRequest*) createUnitRequestWith:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback

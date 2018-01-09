@@ -64,8 +64,11 @@
                  {
                      if (error)
                      {
-                         strongSelf.state = FAILED;
-                         strongSelf.block(strongSelf.translatedWords, @"Unsupported language");
+                         NSMutableDictionary *dictionary = [NSMutableDictionary new];
+                         [dictionary setValue:@"request error" forKey:NSLocalizedDescriptionKey];
+                         //strongSelf.state = FAILED;
+                         NSError *error = [NSError errorWithDomain:@"request error" code:404 userInfo:dictionary];
+                         strongSelf.block(strongSelf.translatedWords, error);
                          return;
                      }
                      
@@ -76,8 +79,12 @@
                                   error: &parseError];
                      if (parseError)
                      {
+                         NSMutableDictionary *dictionary = [NSMutableDictionary new];
+                         [dictionary setValue:@"request error" forKey:NSLocalizedDescriptionKey];
+                         //strongSelf.state = FAILED;
+                         NSError *error = [NSError errorWithDomain:@"request error" code:404 userInfo:dictionary];
                          strongSelf.state = FAILED;
-                         strongSelf.block(strongSelf.translatedWords, @"Parse error");
+                         strongSelf.block(strongSelf.translatedWords, error);
                          return;
                      }
                      
