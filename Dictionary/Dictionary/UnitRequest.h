@@ -20,7 +20,10 @@ typedef enum State : NSInteger
 @property (assign, nonatomic, readonly) State state;
 
 typedef void (^ CompletionBlock)(NSArray<NSString *> *translatedWords, NSError *error);
-- (id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback;
+- (id)initRequestWithWord:(NSString *)wordToTranslate
+          currentLanguage:(NSString *)fromLanguage
+           targetLanguage:(NSString *)toLanguage
+                    block:(CompletionBlock)callback;
 - (void)makeRequest;
 - (void)cancelRequest;
 

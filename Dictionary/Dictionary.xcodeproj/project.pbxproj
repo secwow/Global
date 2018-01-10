@@ -20,7 +20,6 @@
 		63556B631FC6C6DF0021A722 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63556B611FC6C6DF0021A722 /* LaunchScreen.storyboard */; };
 		63556B661FC6C6DF0021A722 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B651FC6C6DF0021A722 /* main.m */; };
 		63556B6E1FC6C8880021A722 /* SearchViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B6D1FC6C8880021A722 /* SearchViewModel.m */; };
-		63556B711FC6FF230021A722 /* ApiDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B701FC6FF230021A722 /* ApiDictionary.m */; };
 		635D72A11FF436D600A056E2 /* ApiDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */; };
 		635D72A41FF43B9A00A056E2 /* UnitRequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */; };
 		63AC697B1FD18359008F3079 /* CellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697A1FD18359008F3079 /* CellView.m */; };
@@ -68,8 +67,6 @@
 		63556B651FC6C6DF0021A722 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		63556B6C1FC6C8880021A722 /* SearchViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchViewModel.h; sourceTree = "<group>"; };
 		63556B6D1FC6C8880021A722 /* SearchViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModel.m; sourceTree = "<group>"; };
-		63556B6F1FC6FF230021A722 /* ApiDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApiDictionary.h; sourceTree = "<group>"; };
-		63556B701FC6FF230021A722 /* ApiDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionary.m; sourceTree = "<group>"; };
 		635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionaryTests.m; sourceTree = "<group>"; };
 		635D72A21FF43B9A00A056E2 /* UnitRequestTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitRequestTest.h; sourceTree = "<group>"; };
 		635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitRequestTest.m; sourceTree = "<group>"; };
@@ -188,8 +185,6 @@
 				63556B651FC6C6DF0021A722 /* main.m */,
 				63556B6C1FC6C8880021A722 /* SearchViewModel.h */,
 				63556B6D1FC6C8880021A722 /* SearchViewModel.m */,
-				63556B6F1FC6FF230021A722 /* ApiDictionary.h */,
-				63556B701FC6FF230021A722 /* ApiDictionary.m */,
 				63208C9A1FE3D26F002F3F87 /* UnitRequest.h */,
 				63208C9B1FE3D26F002F3F87 /* UnitRequest.m */,
 				63243F111FF2DA0500B084EC /* ApiDictionaryTestApi.h */,
@@ -435,7 +430,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				63556B5B1FC6C6DF0021A722 /* ViewController.m in Sources */,
-				63556B711FC6FF230021A722 /* ApiDictionary.m in Sources */,
 				632060DA1FE5350300AA2BAB /* DetailModel.m in Sources */,
 				63556B661FC6C6DF0021A722 /* main.m in Sources */,
 				63AC697E1FD1836F008F3079 /* CellViewModel.m in Sources */,

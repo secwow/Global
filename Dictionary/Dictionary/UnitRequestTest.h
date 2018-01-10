@@ -1,13 +1,14 @@
+////
+////  UnitRequestTest.h
+////  Dictionary
+////
+////  Created by 1 on 12/27/17.
+////  Copyright © 2017 1. All rights reserved.
+////
 //
-//  UnitRequestTest.h
-//  Dictionary
+//#import "ApiDictionary.h"
 //
-//  Created by 1 on 12/27/17.
-//  Copyright © 2017 1. All rights reserved.
-//
+//@interface UnitRequestTest : UnitRequest
+//@property (nonatomic) NSTimeInterval requestDelay;
+//@end
 
-#import "ApiDictionary.h"
-
-@interface UnitRequestTest : UnitRequest
-@property (nonatomic) NSTimeInterval requestDelay;
-@end

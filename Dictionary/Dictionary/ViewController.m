@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "SearchViewModel.h"
-#import "ApiDictionary.h"
 #import "CellView.h"
 #import "DetailView.h"
 #import "DetailModel.h"
@@ -33,9 +32,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setupClosures];
     [self setupTableView];
-    self.searchField.delegate = self;
+    [self bindViewModel];
 }
 
 
@@ -45,71 +43,38 @@
     self.tableView.dataSource = self;
 }
 
-- (void)setupClosures
+- (void)bindViewModel
 {
     @weakify(self);
-    self.viewModel.updateErrorMessage = ^(NSString *errorMessage){
-            @strongify(self);
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-            [alert dismissViewControllerAnimated:true completion:nil];
-            }];
-            [alert addAction:ok];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                  [self presentViewController:alert animated:true completion:nil];
-            });
-    };
-    self.viewModel.updateRequestCount = ^(NSInteger requestCount){
-        @strongify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.totalRequest.text = [@(requestCount) stringValue];
-        });
-    };
-    self.viewModel.updateTranslatedWords = ^(NSArray<NSString *> *translatedWords){
-        @strongify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-             [self.tableView reloadData];
-        });
-    };
-    self.viewModel.updateReverseTranslate = ^(NSString *reversedTranslate){
-        @strongify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.reversedWord.text = reversedTranslate;
-        });
-    };
+    [self.searchField.rac_textSignal
+    subscribeNext:^(NSString *searchText){
+      @strongify(self);
+      [self.viewModel translateWord:searchText];
+    }];
     
-    self.viewModel.updateRequestInProgress = ^(BOOL requestInProgress){
-        @strongify(self);
-        requestInProgress ? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
-        [self.tableView reloadData];
-    };
-}
-
-
-- (void) bindViewModel
-{
-    
-
     [[RACObserve(self.viewModel, translatedWords) deliverOnMainThread]
      subscribeNext:^(NSArray<NSString *> *translatedWords){
-
+         @strongify(self);
          [self.tableView reloadData];
      }];
 
-    [RACObserve(self.viewModel, reversedTranslate)
+    [[RACObserve(self.viewModel, reversedTranslate) deliverOnMainThread]
      subscribeNext:^(NSString *reverseTranslate){
+         @strongify(self);
          self.reversedWord.text = reverseTranslate;
      }];
 
     [[RACObserve(self.viewModel, requestInProgress) deliverOnMainThread]
      subscribeNext:^(NSNumber *requestInProgress){
+         @strongify(self);
          [requestInProgress boolValue]? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
          [self.tableView reloadData];
      }];
 
     [[RACObserve(self.viewModel, requestCount) deliverOnMainThread]
      subscribeNext:^(NSNumber *requestCount){
-         NSLog(@"ITS WORK");
+         @strongify(self);
+         self.totalRequest.text = [requestCount stringValue];
      }];
 
     [[[RACObserve(self.viewModel, errorMessage)
@@ -123,8 +88,14 @@
     }]
     deliverOnMainThread]
     subscribeNext:^(UIAlertController *alertController){
+        @strongify(self);
         [self presentViewController:alertController animated:true completion:nil];
     }];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [self.viewModel translateWord:textField.text];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -136,8 +107,7 @@
     return cell;
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.viewModel.translatedWords.count;
 }
 

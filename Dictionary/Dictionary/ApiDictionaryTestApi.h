@@ -6,8 +6,9 @@
 //  Copyright © 2017 1. All rights reserved.
 //
 
-#import "ApiDictionary.h"
+//#import "ApiDictionary.h"
+//
+//@interface ApiDictionaryTestApi : ApiDictionary
+//@property (nonatomic) NSTimeInterval requestDelay;
+//@end
 
-@interface ApiDictionaryTestApi : ApiDictionary
-@property (nonatomic) NSTimeInterval requestDelay;
-@end
