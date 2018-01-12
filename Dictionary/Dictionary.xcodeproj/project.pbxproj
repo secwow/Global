@@ -12,7 +12,6 @@
 		632060DD1FE53A4500AA2BAB /* UnitDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 632060DC1FE53A4500AA2BAB /* UnitDictionary.m */; };
 		63208C9C1FE3D26F002F3F87 /* UnitRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 63208C9B1FE3D26F002F3F87 /* UnitRequest.m */; };
 		632355F11FE7048800AB83E4 /* DictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 632355F01FE7048800AB83E4 /* DictionaryTests.m */; };
-		63243F161FF2F70E00B084EC /* ApiDictionaryTestApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 63243F121FF2DA0500B084EC /* ApiDictionaryTestApi.m */; };
 		63556B581FC6C6DF0021A722 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B571FC6C6DF0021A722 /* AppDelegate.m */; };
 		63556B5B1FC6C6DF0021A722 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B5A1FC6C6DF0021A722 /* ViewController.m */; };
 		63556B5E1FC6C6DF0021A722 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63556B5C1FC6C6DF0021A722 /* Main.storyboard */; };
@@ -20,13 +19,13 @@
 		63556B631FC6C6DF0021A722 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63556B611FC6C6DF0021A722 /* LaunchScreen.storyboard */; };
 		63556B661FC6C6DF0021A722 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B651FC6C6DF0021A722 /* main.m */; };
 		63556B6E1FC6C8880021A722 /* SearchViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63556B6D1FC6C8880021A722 /* SearchViewModel.m */; };
-		635D72A11FF436D600A056E2 /* ApiDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */; };
-		635D72A41FF43B9A00A056E2 /* UnitRequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */; };
 		63AC697B1FD18359008F3079 /* CellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697A1FD18359008F3079 /* CellView.m */; };
 		63AC697E1FD1836F008F3079 /* CellViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC697D1FD1836F008F3079 /* CellViewModel.m */; };
 		63AC69841FD1ABF8008F3079 /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AC69831FD1ABF8008F3079 /* DetailView.m */; };
 		642011B72FB6C78C883AF806 /* Pods_Dictionary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0570596E42ACB7133D3E3314 /* Pods_Dictionary.framework */; };
 		9C8FFFE3DEB6D14B1EC686B1 /* Pods_DictionaryTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EAFBF4BEEB78B4C83005594 /* Pods_DictionaryTests.framework */; };
+		CE2F6B1D20078E65008A0AFE /* UnitRequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CE2F6B1B20078AD1008A0AFE /* UnitRequestTest.m */; };
+		CE2F6B2020078FFB008A0AFE /* SearchViewModelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CE2F6B1F20078FFB008A0AFE /* SearchViewModelTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,8 +52,6 @@
 		632355EE1FE7048800AB83E4 /* DictionaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DictionaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632355F01FE7048800AB83E4 /* DictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DictionaryTests.m; sourceTree = "<group>"; };
 		632355F21FE7048800AB83E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		63243F111FF2DA0500B084EC /* ApiDictionaryTestApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApiDictionaryTestApi.h; sourceTree = "<group>"; };
-		63243F121FF2DA0500B084EC /* ApiDictionaryTestApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionaryTestApi.m; sourceTree = "<group>"; };
 		63556B531FC6C6DF0021A722 /* Dictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63556B561FC6C6DF0021A722 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		63556B571FC6C6DF0021A722 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -67,9 +64,6 @@
 		63556B651FC6C6DF0021A722 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		63556B6C1FC6C8880021A722 /* SearchViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchViewModel.h; sourceTree = "<group>"; };
 		63556B6D1FC6C8880021A722 /* SearchViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModel.m; sourceTree = "<group>"; };
-		635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApiDictionaryTests.m; sourceTree = "<group>"; };
-		635D72A21FF43B9A00A056E2 /* UnitRequestTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitRequestTest.h; sourceTree = "<group>"; };
-		635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitRequestTest.m; sourceTree = "<group>"; };
 		639AAE8A1FEFB63600C3E73F /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "../../Downloads/weather3/iOS framework/OCMock.framework"; sourceTree = "<group>"; };
 		63AC69791FD18359008F3079 /* CellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CellView.h; sourceTree = "<group>"; };
 		63AC697A1FD18359008F3079 /* CellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CellView.m; sourceTree = "<group>"; };
@@ -78,6 +72,10 @@
 		63AC69821FD1ABF8008F3079 /* DetailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailView.h; sourceTree = "<group>"; };
 		63AC69831FD1ABF8008F3079 /* DetailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailView.m; sourceTree = "<group>"; };
 		B3363FAA2839C9E73C051231 /* Pods-Dictionary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dictionary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dictionary/Pods-Dictionary.release.xcconfig"; sourceTree = "<group>"; };
+		CE2F6B1A20078ACA008A0AFE /* UnitRequestTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitRequestTest.h; sourceTree = "<group>"; };
+		CE2F6B1B20078AD1008A0AFE /* UnitRequestTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnitRequestTest.m; sourceTree = "<group>"; };
+		CE2F6B1E20078FFB008A0AFE /* SearchViewModelTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchViewModelTest.h; sourceTree = "<group>"; };
+		CE2F6B1F20078FFB008A0AFE /* SearchViewModelTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchViewModelTest.m; sourceTree = "<group>"; };
 		DD61826870CD363A7D6D2D1E /* Pods-DictionaryTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DictionaryTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DictionaryTests/Pods-DictionaryTests.release.xcconfig"; sourceTree = "<group>"; };
 		E3AD3E3442A1DD5E7092F18A /* Pods-DictionaryTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DictionaryTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DictionaryTests/Pods-DictionaryTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ECD7E824E518B96D0DE1CD22 /* Pods-Dictionary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dictionary.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dictionary/Pods-Dictionary.debug.xcconfig"; sourceTree = "<group>"; };
@@ -142,9 +140,12 @@
 		632355EF1FE7048800AB83E4 /* DictionaryTests */ = {
 			isa = PBXGroup;
 			children = (
-				635D72A01FF436D600A056E2 /* ApiDictionaryTests.m */,
+				CE2F6B1A20078ACA008A0AFE /* UnitRequestTest.h */,
+				CE2F6B1B20078AD1008A0AFE /* UnitRequestTest.m */,
 				632355F01FE7048800AB83E4 /* DictionaryTests.m */,
 				632355F21FE7048800AB83E4 /* Info.plist */,
+				CE2F6B1E20078FFB008A0AFE /* SearchViewModelTest.h */,
+				CE2F6B1F20078FFB008A0AFE /* SearchViewModelTest.m */,
 			);
 			path = DictionaryTests;
 			sourceTree = "<group>";
@@ -187,10 +188,6 @@
 				63556B6D1FC6C8880021A722 /* SearchViewModel.m */,
 				63208C9A1FE3D26F002F3F87 /* UnitRequest.h */,
 				63208C9B1FE3D26F002F3F87 /* UnitRequest.m */,
-				63243F111FF2DA0500B084EC /* ApiDictionaryTestApi.h */,
-				63243F121FF2DA0500B084EC /* ApiDictionaryTestApi.m */,
-				635D72A21FF43B9A00A056E2 /* UnitRequestTest.h */,
-				635D72A31FF43B9A00A056E2 /* UnitRequestTest.m */,
 			);
 			path = Dictionary;
 			sourceTree = "<group>";
@@ -366,10 +363,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-DictionaryTests/Pods-DictionaryTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
+				"${BUILT_PRODUCTS_DIR}/ReactiveObjC/ReactiveObjC.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveObjC.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -419,9 +418,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				635D72A11FF436D600A056E2 /* ApiDictionaryTests.m in Sources */,
+				CE2F6B1D20078E65008A0AFE /* UnitRequestTest.m in Sources */,
+				CE2F6B2020078FFB008A0AFE /* SearchViewModelTest.m in Sources */,
 				632355F11FE7048800AB83E4 /* DictionaryTests.m in Sources */,
-				63243F161FF2F70E00B084EC /* ApiDictionaryTestApi.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +438,6 @@
 				63AC69841FD1ABF8008F3079 /* DetailView.m in Sources */,
 				63AC697B1FD18359008F3079 /* CellView.m in Sources */,
 				63556B581FC6C6DF0021A722 /* AppDelegate.m in Sources */,
-				635D72A41FF43B9A00A056E2 /* UnitRequestTest.m in Sources */,
 				632060D71FE534F500AA2BAB /* DetailViewModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

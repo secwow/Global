@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DetailViewModel.h"
+@class DetailViewModel;
 
 @interface DetailView: UIViewController
 

@@ -7,6 +7,7 @@
 //
 
 #import "DetailModel.h"
+#import "UnitDictionary.h"
 
 #define REQUEST_STRING @"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@"
 #define APP_ID @"9436ccf8"

@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "UnitDictionary.h"
+
+@class UnitDictionary;
+
 @interface DetailModel : NSObject
 typedef void (^ CompletionHandler)(NSArray<UnitDictionary *> *translatedWords);
 

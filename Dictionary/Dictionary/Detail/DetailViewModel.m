@@ -8,6 +8,7 @@
 
 #import "DetailModel.h"
 #import "DetailViewModel.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface DetailViewModel()
 @property (nonatomic, strong) DetailModel *model;
@@ -28,9 +29,10 @@
 
 - (void)fillFormWithWord:(NSString *)word
 {
-    __weak DetailViewModel *strongSelf = self;
+    @weakify(self);
     [self.model wordToGetInfo:word fromLanguage:@"es" block:^(NSArray<UnitDictionary *> *traslatedWords){
-        strongSelf.details = traslatedWords;
+        @strongify(self);
+        self.details = traslatedWords;
     }];
 }
 @end

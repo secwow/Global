@@ -12,7 +12,6 @@
 #import "DetailView.h"
 #import "DetailModel.h"
 #import "DetailViewModel.h"
-#import "ApiDictionaryTestApi.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 
 #define reuseIdentifier @"cellView"
@@ -46,11 +45,9 @@
 - (void)bindViewModel
 {
     @weakify(self);
-    [self.searchField.rac_textSignal
-    subscribeNext:^(NSString *searchText){
-      @strongify(self);
-      [self.viewModel translateWord:searchText];
-    }];
+    [self.searchField addTarget:self
+                  action:@selector(textFieldDidChange:)
+        forControlEvents:UIControlEventEditingChanged];
     
     [[RACObserve(self.viewModel, translatedWords) deliverOnMainThread]
      subscribeNext:^(NSArray<NSString *> *translatedWords){
@@ -77,7 +74,10 @@
          self.totalRequest.text = [requestCount stringValue];
      }];
 
-    [[[RACObserve(self.viewModel, errorMessage)
+    [[[[RACObserve(self.viewModel, errorMessage)
+       filter:^BOOL(id  _Nullable value) {
+           return value != nil;
+       }]
     map:^id(NSString *errorMessage){
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
@@ -93,7 +93,7 @@
     }];
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
+- (void)textFieldDidChange:(UITextField *)textField
 {
     [self.viewModel translateWord:textField.text];
 }

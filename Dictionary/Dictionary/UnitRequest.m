@@ -8,8 +8,8 @@
 
 #import "UnitRequest.h"
 #define REQUEST_STRING @"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@"
-#define APP_ID @"9436ccf8"
-#define APP_KEY @"c360af3c7857068578608c17e2060ebf"
+#define APP_ID @"28fdbc37"
+#define APP_KEY @"068be45d64a25659269ee9556b5f72b9"
 
 @interface UnitRequest()
 
@@ -64,10 +64,6 @@
                  {
                      if (error)
                      {
-                         NSMutableDictionary *dictionary = [NSMutableDictionary new];
-                         [dictionary setValue:@"request error" forKey:NSLocalizedDescriptionKey];
-                         //strongSelf.state = FAILED;
-                         NSError *error = [NSError errorWithDomain:@"request error" code:404 userInfo:dictionary];
                          strongSelf.block(strongSelf.translatedWords, error);
                          return;
                      }
@@ -79,12 +75,9 @@
                                   error: &parseError];
                      if (parseError)
                      {
-                         NSMutableDictionary *dictionary = [NSMutableDictionary new];
-                         [dictionary setValue:@"request error" forKey:NSLocalizedDescriptionKey];
-                         //strongSelf.state = FAILED;
-                         NSError *error = [NSError errorWithDomain:@"request error" code:404 userInfo:dictionary];
+                         
                          strongSelf.state = FAILED;
-                         strongSelf.block(strongSelf.translatedWords, error);
+                         strongSelf.block(strongSelf.translatedWords, parseError);
                          return;
                      }
                      

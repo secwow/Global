@@ -22,4 +22,6 @@
 //actions
 -(void)translateWord:(NSString *)word;
 
+-(id)initWithThrottlingDuration:(float)delay;
+
 @end
