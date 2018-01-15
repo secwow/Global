@@ -7,6 +7,7 @@
 //
 
 #import "UnitRequest.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 #define REQUEST_STRING @"https://od-api.oxforddictionaries.com:443/api/v1/entries/%@/%@/translations=%@"
 #define APP_ID @"28fdbc37"
 #define APP_KEY @"068be45d64a25659269ee9556b5f72b9"
@@ -25,6 +26,37 @@
 
 @implementation UnitRequest
 
+static UnitRequest *_instance;
+
++(RACSignal *)performRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage {
+    if (_instance != nil)
+    {
+        [_instance cancelRequest];
+        _instance = nil;
+    }
+    return [RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
+      {
+          
+          _instance = [[UnitRequest alloc]initRequestWithWord:wordToTranslate
+                                             currentLanguage:fromLanguage
+                                              targetLanguage:toLanguage
+                                                       block:^(NSArray<NSString *> *translatedWords, NSError *error){
+                                                           if(error != nil)
+                                                           {
+                                                               [subscriber sendError:error];
+                                                           }
+                                                           else
+                                                           {
+                                                               [subscriber sendNext:translatedWords];
+                                                               [subscriber sendCompleted];
+                                                           }
+                                                       }];
+
+          [_instance makeRequest];
+          return nil;
+      }];
+}
+
 -(id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback
 {
     self = [super init];
@@ -42,6 +74,7 @@
 
 - (void)cancelRequest
 {
+    NSLog(@"Canceled request with a word %@", self.wordToTranslate);
     [self.task cancel];
     self.state = CANCELED;
 }
@@ -58,13 +91,13 @@
     
     NSURLSession *session = [NSURLSession sharedSession];
     
-    __weak UnitRequest *strongSelf = self;
-    strongSelf.state = INPROGRESS;
+    @weakify(self);
     self.task = [session dataTaskWithRequest:request completionHandler: ^(NSData* data, NSURLResponse *response, NSError *error)
                  {
+                     @strongify(self);
                      if (error)
                      {
-                         strongSelf.block(strongSelf.translatedWords, error);
+                         self.block(self.translatedWords, error);
                          return;
                      }
                      
@@ -75,9 +108,7 @@
                                   error: &parseError];
                      if (parseError)
                      {
-                         
-                         strongSelf.state = FAILED;
-                         strongSelf.block(strongSelf.translatedWords, parseError);
+                         self.block(self.translatedWords, parseError);
                          return;
                      }
                      
@@ -112,12 +143,12 @@
 
                          }
                      }
-                     if (strongSelf.state == CANCELED)
+                     if (self.state == CANCELED)
                      {
                          return;    
                      }
                      self.translatedWords = words.array;
-                     strongSelf.block(self.translatedWords, nil);
+                     self.block(self.translatedWords, nil);
                  }];
     
     [self.task resume];

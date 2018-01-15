@@ -35,7 +35,6 @@
     [self bindViewModel];
 }
 
-
 - (void)setupTableView
 {
     self.tableView.delegate = self;

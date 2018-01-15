@@ -30,17 +30,6 @@
 
 -(id)initWithThrottlingDuration:(float)delay
 {
-    
-    
-//flattenMap:^RACSignal *(NSString *searchText) {
-//    return [[self createSimpleRequestSignalWithWord:searchText]
-//            catch:^RACSignal * _Nonnull(NSError * _Nonnull error) {
-//                self.errorMessage = error.localizedDescription;
-//                self.requestInProgress = false;
-//                return [RACSignal never];
-//            }];
-//}]
-    
     self = [super init];
     
     if (self != nil)
@@ -48,41 +37,41 @@
         self.requestCount = 0;
         
         [[[[[[[RACObserve(self, query)
-             filter:^BOOL(NSString*  _Nullable value) {
-                 return value.length > 2;
-             }]
-            throttle:delay]
-            distinctUntilChanged]
-           map:^RACSignal *(NSString *searchText) {
-               return [self createSimpleRequestSignalWithWord:searchText];
-           }]
+               filter:^BOOL(NSString*  _Nullable value) {
+                   return value.length > 2;
+               }]
+              throttle:delay]
+             distinctUntilChanged]
+            map:^RACSignal *(NSString *searchText) {
+                return [self createSimpleRequestSignalWithWord:searchText reverse:false];
+            }]
            switchToLatest]
           map:^id _Nullable(NSArray <NSString *> *translatedWords) {
               return [self takeFirstFive:translatedWords];
           }]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
              self.translatedWords = translatedWords;
+             self.reversedTranslate = nil;
              self.errorMessage = nil;
          }];
-
-       [[[[[[RACObserve(self, translatedWords)
+        
+        [[[[[RACObserve(self, translatedWords)
              filter:^BOOL(NSArray <NSString *> *translatedWords) {
                  return translatedWords.count > 0;
              }]
             map:^NSString *(NSArray <NSString *> *translatedWords) {
                 return [translatedWords firstObject];
             }]
-              map:^RACSignal *(NSString *searchText) {
-                  return [self createSimpleRequestSignalWithWord:searchText];
-              }]
-             switchToLatest]
+           map:^RACSignal *(NSString *searchText) {
+               return [self createSimpleRequestSignalWithWord:searchText reverse:true];
            }]
-          subscribeNext:^(NSArray <NSString *> *translatedWords) {
-              self.reversedTranslate = [translatedWords firstObject];
-              self.errorMessage = nil;
-              self.requestInProgress = false;
-          }];
-         }
+          switchToLatest]
+         subscribeNext:^(NSArray <NSString *> *translatedWords) {
+             self.reversedTranslate = [translatedWords firstObject];
+             self.errorMessage = nil;
+             self.requestInProgress = false;
+         }];
+    }
     return self;
 }
 
@@ -105,45 +94,26 @@
     return translatedWords;
 }
 
-- (RACSignal *)createSimpleRequestSignalWithWord:(NSString *)word
+- (RACSignal *)createSimpleRequestSignalWithWord:(NSString *)word reverse:(BOOL)isReversed
 {
-    NSLog(@"Start");
-    return  [[RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
-               {
-                   
-                   UnitRequest *request = [self createUnitRequestWith:word
-                                                      currentLanguage:TARGET_LANGUAGE
-                                                       targetLanguage:LANGUAGE
-                                                                block:^(NSArray<NSString *> *translatedWords, NSError *error){
-                                                                    if(error != nil)
-                                                                    {
-                                                                        [subscriber sendError:error];
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        NSLog(@"Send result from %@ ", word);
-                                                                        [subscriber sendNext:translatedWords];
-                                                                        [subscriber sendCompleted];
-                                                                    }
-                                                                }];
-                   
-                   [request makeRequest];
-                   return [RACDisposable disposableWithBlock:^{
-                       NSLog(@"%@ dispose", word);
-                       [request cancelRequest];
-                   }];
-               }]
-              doNext:^(id value){
-                  self.requestCount++;
-              }];
+    NSString *currentLanguage = isReversed ? TARGET_LANGUAGE : LANGUAGE;
+    NSString *targetLanguage =  isReversed ? LANGUAGE : TARGET_LANGUAGE;
+    
+    return [[[self createUnitRequestWith:word currentLanguage:currentLanguage targetLanguage:targetLanguage] doNext:^(id  _Nullable x) {
+        self.requestCount++;
+    }]
+    catch:^RACSignal * _Nonnull(NSError * _Nonnull error) {
+        self.errorMessage = error.localizedDescription;
+        self.requestInProgress = false;
+        return [RACSignal empty];
+    }];
 }
 
-- (UnitRequest*) createUnitRequestWith:(NSString *)wordToTranslate
-                       currentLanguage:(NSString *)fromLanguage
-                        targetLanguage:(NSString *)toLanguage
-                                 block:(CompletionBlock)callback
+- (RACSignal*) createUnitRequestWith:(NSString *)wordToTranslate
+                     currentLanguage:(NSString *)fromLanguage
+                      targetLanguage:(NSString *)toLanguage
 {
-    return [[UnitRequest alloc]initRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage block:callback];
+    return [UnitRequest performRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage];
 }
 
 @end

@@ -10,5 +10,6 @@
 
 @interface UnitRequestTest : UnitRequest
 @property (nonatomic) NSTimeInterval requestDelay;
+- (void)makeRequest;
 @end
 

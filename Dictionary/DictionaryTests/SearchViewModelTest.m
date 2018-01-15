@@ -10,12 +10,11 @@
 #import "UnitRequestTest.h"
 @implementation SearchViewModelTest
 
-- (UnitRequest*) createUnitRequestWith:(NSString *)wordToTranslate
-                       currentLanguage:(NSString *)fromLanguage
-                        targetLanguage:(NSString *)toLanguage
-                                 block:(CompletionBlock)callback
+- (RACSignal*) createUnitRequestWith:(NSString *)wordToTranslate
+                     currentLanguage:(NSString *)fromLanguage
+                      targetLanguage:(NSString *)toLanguage
 {
-    return [[UnitRequestTest alloc]initRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage block:callback];
+    return [UnitRequestTest performRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage];
 }
 
 

@@ -12,24 +12,23 @@
 #import "SearchViewModelTest.h"
     
 @interface DictionaryTests : XCTestCase
+
 @property (strong, nonatomic) ApiDictionary *model;
 @property (strong, nonatomic) SearchViewModel *viewModel;
+
 @end
 
 @implementation DictionaryTests
 
 - (void)setUp {
     [super setUp];
-
     self.viewModel = [[SearchViewModelTest alloc] initWithThrottlingDuration:0];
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
-    
     [super tearDown];
 }
-
 
 - (void)testRequestTextValidation
 {
@@ -43,55 +42,44 @@
     [self waitForExpectationsWithTimeout:0.2 handler:nil];
 }
 
+- (void)testLoadingIndiation
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"The number of requests after cancellation must be 3"];
 
-//- (void)testLoadingIndiation
-//{
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"The number of requests after cancellation must be 3"];
-//    ApiDictionaryTestApi *temp = (ApiDictionaryTestApi *)self.model;
-//    temp.requestDelay = 0.1;
-//    XCTAssert(self.viewModel.requestInProgress == false);
-//    [self.viewModel searchTextUpdated:@"five"];
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//        XCTAssert(self.viewModel.requestInProgress == true);
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//            [expectation fulfill];
-//        });
-//    });
-//   
-//    [self waitForExpectationsWithTimeout:4 handler:nil];
-//    XCTAssert(self.viewModel.requestInProgress == false);
-//}
-//
-//
+    XCTAssert(self.viewModel.requestInProgress == false);
+    [self.viewModel translateWord:@"five"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        XCTAssert(self.viewModel.requestInProgress == true);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [expectation fulfill];
+        });
+    });
+    [self waitForExpectationsWithTimeout:4 handler:nil];
+    XCTAssert(self.viewModel.requestInProgress == false);
+}
+
 - (void)testRequestCount
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"The number of requests after cancellation must be 3"];
     
-     self.viewModel = [[SearchViewModelTest alloc] initWithThrottlingDuration:0];
     [self.viewModel translateWord:@"five"];
-    [self.viewModel translateWord:@"five"];
-    [self.viewModel translateWord:@"five"];
-    [self.viewModel translateWord:@"five"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self.viewModel translateWord:@"six"];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.15 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             XCTAssert(self.viewModel.requestCount == 3);
-            [self.viewModel translateWord:@"five"];
             [expectation fulfill];
         });
         
     });
-    
-    
     [self waitForExpectationsWithTimeout:19999 handler:nil];
 }
 
 - (void)testCountForOneRequest
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"The number of requests must be 2"];
-    
     [self.viewModel translateWord:@"five"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         XCTAssert(self.viewModel.requestCount == 2);
         [expectation fulfill];
     });
@@ -110,24 +98,7 @@
     });
     [self waitForExpectationsWithTimeout:4 handler:nil];
 }
-//
-//- (void)testStateFlow
-//{
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"After 0.9 delay a model state should changed to inprogress and after 2 seconds to done"];
-//    ApiDictionaryTestApi *temp = (ApiDictionaryTestApi *)self.model;
-//    temp.requestDelay = 0.05;
-//    [self.viewModel searchTextUpdated:@"five"];
-//    
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//        XCTAssert(self.model.state == INPROGRESS);
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//            XCTAssert(self.model.state == DONE);
-//            [expectation fulfill];
-//        });
-//    });
-//    [self waitForExpectationsWithTimeout:4 handler:nil];
-//}
-//
+
 - (void)testError
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"After send message \"error\" we should return \"Error test\" "];
@@ -135,21 +106,19 @@
     [self.viewModel translateWord:@"error"];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        //XCTAssert(self.model.state == FAILED);
         XCTAssert([self.viewModel.errorMessage isEqualToString:@"Error test"]);
         [expectation fulfill];
     });
     [self waitForExpectationsWithTimeout:4 handler:nil];
 }
-//
+
 - (void)testReverseWordCheck
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"After send message \"error\" we should return \"Error test\" "];
     
     [self.viewModel translateWord:@"five"];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        //XCTAssert(self.model.state == DONE);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         XCTAssert(self.viewModel.reversedTranslate != nil);
         [expectation fulfill];
     });
@@ -169,5 +138,23 @@
     [self waitForExpectationsWithTimeout:4 handler:nil];
 }
 
+- (void)testRequestCounterAfterSeriesOfRequest
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"After series of request we will make only one"];
+    
+    XCTAssert(self.viewModel.requestInProgress == false);
+    [self.viewModel translateWord:@"five"];
+    [self.viewModel translateWord:@"five"];
+    [self.viewModel translateWord:@"five"];
+    [self.viewModel translateWord:@"five"];
+    [self.viewModel translateWord:@"five"];
+    [self.viewModel translateWord:@"five"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        XCTAssert(self.viewModel.requestCount == 2);
+        [expectation fulfill];
+    });
+    [self waitForExpectationsWithTimeout:4 handler:nil];
+    XCTAssert(self.viewModel.requestInProgress == false);
+}
 
 @end

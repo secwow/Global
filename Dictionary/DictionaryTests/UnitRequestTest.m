@@ -21,7 +21,36 @@
 #define LANGUAGE @"en"
 #define TARGET_LANGUAGE @"es"
 
-@synthesize state, wordToTranslate;
+static UnitRequestTest *_instance;
+
++(RACSignal *)performRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage {
+    if (_instance != nil)
+    {
+        [_instance cancelRequest];
+        _instance = nil;
+    }
+    return [RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
+            {
+                
+                _instance = [[UnitRequestTest alloc]initRequestWithWord:wordToTranslate
+                                                    currentLanguage:fromLanguage
+                                                     targetLanguage:toLanguage
+                                                              block:^(NSArray<NSString *> *translatedWords, NSError *error){
+                                                                  if(error != nil)
+                                                                  {
+                                                                      [subscriber sendError:error];
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      [subscriber sendNext:translatedWords];
+                                                                      [subscriber sendCompleted];
+                                                                  }
+                                                              }];
+                
+                [_instance makeRequest];
+                return nil;
+            }];
+}
 
 - (void)makeRequest
 {
@@ -39,7 +68,6 @@
         {
             NSMutableDictionary *dictionary = [NSMutableDictionary new];
             [dictionary setValue:@"Error test" forKey:NSLocalizedDescriptionKey];
-            //strongSelf.state = FAILED;
             NSError *error = [NSError errorWithDomain:@"request error" code:404 userInfo:dictionary];
             self.block(self.translatedWords, error);
             return;
