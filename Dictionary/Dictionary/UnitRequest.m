@@ -36,7 +36,6 @@ static UnitRequest *_instance;
     }
     return [RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
       {
-          
           _instance = [[UnitRequest alloc]initRequestWithWord:wordToTranslate
                                              currentLanguage:fromLanguage
                                               targetLanguage:toLanguage

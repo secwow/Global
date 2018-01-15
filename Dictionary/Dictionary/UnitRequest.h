@@ -29,6 +29,7 @@ typedef void (^ CompletionBlock)(NSArray<NSString *> *translatedWords, NSError *
 - (void)makeRequest;
 - (void)cancelRequest;
 
+// We can make only one request
 + (RACSignal*)performRequestWithWord:(NSString *)wordToTranslate
                       currentLanguage:(NSString *)fromLanguage
                        targetLanguage:(NSString *)toLanguage;

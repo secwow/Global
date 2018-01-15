@@ -35,7 +35,7 @@
     if (self != nil)
     {
         self.requestCount = 0;
-        
+        @weakify(self);
         [[[[[[[RACObserve(self, query)
                filter:^BOOL(NSString*  _Nullable value) {
                    return value.length > 2;
@@ -50,6 +50,7 @@
               return [self takeFirstFive:translatedWords];
           }]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
+             @strongify(self);
              self.translatedWords = translatedWords;
              self.reversedTranslate = nil;
              self.errorMessage = nil;
@@ -67,6 +68,7 @@
            }]
           switchToLatest]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
+             @strongify(self);
              self.reversedTranslate = [translatedWords firstObject];
              self.errorMessage = nil;
              self.requestInProgress = false;
@@ -98,11 +100,13 @@
 {
     NSString *currentLanguage = isReversed ? TARGET_LANGUAGE : LANGUAGE;
     NSString *targetLanguage =  isReversed ? LANGUAGE : TARGET_LANGUAGE;
-    
+    @weakify(self);
     return [[[self createUnitRequestWith:word currentLanguage:currentLanguage targetLanguage:targetLanguage] doNext:^(id  _Nullable x) {
+        @strongify(self);
         self.requestCount++;
     }]
     catch:^RACSignal * _Nonnull(NSError * _Nonnull error) {
+        @strongify(self);
         self.errorMessage = error.localizedDescription;
         self.requestInProgress = false;
         return [RACSignal empty];
