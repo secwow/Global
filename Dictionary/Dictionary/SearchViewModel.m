@@ -17,7 +17,6 @@
 @property (nonatomic) NSInteger requestCount;
 @property (nonatomic) NSString *reversedTranslate;
 @property (nonatomic) BOOL requestInProgress;
-@property (nonatomic) State state;
 
 @property (nonatomic) NSString* query;
 
