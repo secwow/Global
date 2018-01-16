@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@class RACSignal;
 
 typedef enum State : NSInteger
 {
@@ -18,11 +19,19 @@ typedef enum State : NSInteger
 @property (nonatomic,readonly) NSString *wordToTranslate;
 @property (assign, nonatomic, readonly) State state;
 
-typedef void (^ CompletionBlock)(NSArray<NSString *> *translatedWords, NSString *error);
-- (id)initRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage block:(CompletionBlock)callback;
+typedef void (^ CompletionBlock)(NSArray<NSString *> *translatedWords, NSError *error);
+
+- (id)initRequestWithWord:(NSString *)wordToTranslate
+          currentLanguage:(NSString *)fromLanguage
+           targetLanguage:(NSString *)toLanguage
+                    block:(CompletionBlock)callback;
+
 - (void)makeRequest;
 - (void)cancelRequest;
 
-
+// We can make only one request
++ (RACSignal*)performRequestWithWord:(NSString *)wordToTranslate
+                      currentLanguage:(NSString *)fromLanguage
+                       targetLanguage:(NSString *)toLanguage;
 
 @end

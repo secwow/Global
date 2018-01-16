@@ -8,6 +8,7 @@
 
 #import "CellView.h"
 #import "CellViewModel.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface CellView()
 
@@ -25,8 +26,10 @@
     {
         self.viewModel = [CellViewModel new];
     }
-    
-    [self.viewModel addObserver:self forKeyPath:@"isEnabled" options:NSKeyValueObservingOptionNew context:nil];
+    [[RACObserve(self.viewModel, isEnabled) deliverOnMainThread]
+     subscribeNext:^(NSNumber *isEnabled) {
+         self.cellTitleLabel.textColor = [isEnabled boolValue] ? UIColor.blackColor : UIColor.grayColor;
+     }];
 }
 
 - (void)configure:(NSString *)withData
@@ -38,25 +41,6 @@
 - (void)toggleCellAccessibility:(BOOL)enable
 {
     self.viewModel.isEnabled = enable;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{ 
-    if ([keyPath isEqualToString:@"isEnabled"])
-    {
-        NSNumber *isEnabledWrapper = change[@"new"];
-        BOOL isEnabled = [isEnabledWrapper boolValue];
-        self.cellTitleLabel.textColor = isEnabled ? UIColor.blackColor : UIColor.grayColor ;
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
-- (void)dealloc
-{
-    [self.viewModel removeObserver:self forKeyPath:@"isEnabled"];
 }
 
 @end

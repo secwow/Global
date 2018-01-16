@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "ApiDictionary.h"
 #import "SearchViewModel.h"
 #import "ViewController.h"
 
@@ -25,14 +24,13 @@
     navigationController.title = @"Main";
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];
-    
+
     return YES;
 }
 
 - (ViewController *)createInitialView
 {
-    ApiDictionary *model = [[ApiDictionary alloc] init];
-    SearchViewModel *viewModel = [[SearchViewModel alloc] initWithModel: model];
+    SearchViewModel *viewModel = [[SearchViewModel alloc]initWithThrottlingDuration:0.9];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ViewController *viewController = (ViewController *) [storyboard instantiateViewControllerWithIdentifier:@"SearchViewController"];
     viewController.viewModel = viewModel;

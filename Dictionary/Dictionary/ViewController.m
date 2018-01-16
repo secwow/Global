@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "SearchViewModel.h"
-#import "ApiDictionary.h"
 #import "CellView.h"
 #import "DetailView.h"
 #import "DetailModel.h"
@@ -17,7 +16,7 @@
 
 #define reuseIdentifier @"cellView"
 
-@interface ViewController()<UITableViewDelegate, UITableViewDataSource>
+@interface ViewController()<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingView;
 @property (weak, nonatomic) IBOutlet UILabel *reversedWord;
@@ -32,8 +31,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self registerObserver];
     [self setupTableView];
+    [self bindViewModel];
 }
 
 - (void)setupTableView
@@ -42,94 +41,60 @@
     self.tableView.dataSource = self;
 }
 
-- (void) registerObserver
+- (void)bindViewModel
 {
+    @weakify(self);
+    [self.searchField addTarget:self
+                  action:@selector(textFieldDidChange:)
+        forControlEvents:UIControlEventEditingChanged];
     
-    [self.viewModel addObserver:self forKeyPath: @"translatedWords" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"reversedTranslate" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"requestInProgress" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath: @"requestCount" options: NSKeyValueObservingOptionNew context: nil];
-    [self.viewModel addObserver:self forKeyPath:@"errorMessage" options:NSKeyValueObservingOptionNew context:nil];
-    [self.searchField addTarget: self action: @selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
-}
+    [[RACObserve(self.viewModel, translatedWords) deliverOnMainThread]
+     subscribeNext:^(NSArray<NSString *> *translatedWords){
+         @strongify(self);
+         [self.tableView reloadData];
+     }];
 
-- (void) unregisterObserver
-{
-    [self.viewModel removeObserver:self forKeyPath:@"translatedWords"];
-    [self.viewModel removeObserver:self forKeyPath:@"errorMessage"];
-    [self.viewModel removeObserver:self forKeyPath:@"requestCount"];
-    [self.viewModel removeObserver:self forKeyPath:@"requestInProgress"];
-    [self.viewModel removeObserver:self forKeyPath:@"reversedTranslate"];
-    [self.searchField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents: UIControlEventEditingChanged];
-}
+    [[RACObserve(self.viewModel, reversedTranslate) deliverOnMainThread]
+     subscribeNext:^(NSString *reverseTranslate){
+         @strongify(self);
+         self.reversedWord.text = reverseTranslate;
+     }];
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString: @"translatedWords"])
-    {
-         dispatch_async(dispatch_get_main_queue(), ^{
-             [self.tableView reloadData];
-         });
-    }
-    else if ([keyPath isEqualToString: @"reversedTranslate"])
-    {
-        NSString *reversedTranslate = change[@"new"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.reversedWord.text = reversedTranslate;
-        });
-    }
-    else if ([keyPath isEqualToString: @"requestInProgress"])
-    {
-        NSNumber *requestInProgressNUM = change[@"new"];
-        BOOL requestInProgress = [requestInProgressNUM boolValue];
-         dispatch_async(dispatch_get_main_queue(), ^{
-            self.tableView.userInteractionEnabled = !requestInProgress;
-            if (requestInProgress)
-            {
-                [self.loadingView startAnimating];
-            }
-            else
-            {
-                [self.loadingView stopAnimating];
-            }
-            [self.tableView reloadData];
-        });
-    }
-    else if ([keyPath isEqualToString: @"requestCount"])
-    {
-        NSInteger count = [[change valueForKey: @"new"] integerValue];
-        dispatch_async(dispatch_get_main_queue(), ^{
-             self.totalRequest.text = [@(count) stringValue];
-        });
-    }
-    else if ([keyPath isEqualToString:@"errorMessage"])
-    {
-        NSString *error = [change valueForKey: @"new"];
-       
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:error preferredStyle:UIAlertControllerStyleAlert];
-        
+    [[RACObserve(self.viewModel, requestInProgress) deliverOnMainThread]
+     subscribeNext:^(NSNumber *requestInProgress){
+         @strongify(self);
+         [requestInProgress boolValue]? [self.loadingView startAnimating] : [self.loadingView stopAnimating];
+         [self.tableView reloadData];
+     }];
+
+    [[RACObserve(self.viewModel, requestCount) deliverOnMainThread]
+     subscribeNext:^(NSNumber *requestCount){
+         @strongify(self);
+         self.totalRequest.text = [requestCount stringValue];
+     }];
+
+    [[[[RACObserve(self.viewModel, errorMessage)
+       filter:^BOOL(id  _Nullable value) {
+           return value != nil;
+       }]
+    map:^id(NSString *errorMessage){
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
             [alert dismissViewControllerAnimated:true completion:nil];
         }];
         [alert addAction:ok];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self presentViewController:alert animated:true completion:nil];
-        });
-    }
-    else
-    {
-        [super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-    }
+        return alert;
+    }]
+    deliverOnMainThread]
+    subscribeNext:^(UIAlertController *alertController){
+        @strongify(self);
+        [self presentViewController:alertController animated:true completion:nil];
+    }];
 }
 
-- (void)textFieldDidChange: (UITextField *)textField
+- (void)textFieldDidChange:(UITextField *)textField
 {
-    [self.viewModel searchTextUpdated: textField.text];
-}
-
-- (void)dealloc
-{
-    [self unregisterObserver];
+    [self.viewModel translateWord:textField.text];
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -141,8 +106,7 @@
     return cell;
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.viewModel.translatedWords.count;
 }
 

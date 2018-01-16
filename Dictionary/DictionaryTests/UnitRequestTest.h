@@ -6,8 +6,10 @@
 //  Copyright © 2017 1. All rights reserved.
 //
 
-#import "ApiDictionary.h"
+#import "UnitRequest.h"
 
 @interface UnitRequestTest : UnitRequest
 @property (nonatomic) NSTimeInterval requestDelay;
+- (void)makeRequest;
 @end
+

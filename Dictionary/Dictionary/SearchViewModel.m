@@ -7,11 +7,10 @@
 //
 
 #import "SearchViewModel.h"
-#import "ApiDictionary.h"
+#import "UnitRequest.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface SearchViewModel()
-
-@property (strong, nonatomic) ApiDictionary *model;
 
 @property (nonatomic) NSArray<NSString *> *translatedWords;
 @property (nonatomic) NSString *errorMessage;
@@ -19,109 +18,105 @@
 @property (nonatomic) NSString *reversedTranslate;
 @property (nonatomic) BOOL requestInProgress;
 
+@property (nonatomic) NSString* query;
+
 @end
 
 @implementation SearchViewModel
 
-- (id)initWithModel:(ApiDictionary *)api
+#define LANGUAGE @"en"
+#define TARGET_LANGUAGE @"es"
+
+-(id)initWithThrottlingDuration:(float)delay
 {
     self = [super init];
     
     if (self != nil)
     {
-        self.model = api;
         self.requestCount = 0;
-        self.throttlingDelay = 0.9;
-        [self registerObserver];
+        @weakify(self);
+        [[[[[[[RACObserve(self, query)
+               filter:^BOOL(NSString*  _Nullable value) {
+                   return value.length > 2;
+               }]
+              throttle:delay]
+             distinctUntilChanged]
+            map:^RACSignal *(NSString *searchText) {
+                return [self createSimpleRequestSignalWithWord:searchText reverse:false];
+            }]
+           switchToLatest]
+          map:^id _Nullable(NSArray <NSString *> *translatedWords) {
+              return [self takeFirstFive:translatedWords];
+          }]
+         subscribeNext:^(NSArray <NSString *> *translatedWords) {
+             @strongify(self);
+             self.translatedWords = translatedWords;
+             self.reversedTranslate = nil;
+             self.errorMessage = nil;
+         }];
+        
+        [[[[[RACObserve(self, translatedWords)
+             filter:^BOOL(NSArray <NSString *> *translatedWords) {
+                 return translatedWords.count > 0;
+             }]
+            map:^NSString *(NSArray <NSString *> *translatedWords) {
+                return [translatedWords firstObject];
+            }]
+           map:^RACSignal *(NSString *searchText) {
+               return [self createSimpleRequestSignalWithWord:searchText reverse:true];
+           }]
+          switchToLatest]
+         subscribeNext:^(NSArray <NSString *> *translatedWords) {
+             @strongify(self);
+             self.reversedTranslate = [translatedWords firstObject];
+             self.errorMessage = nil;
+             self.requestInProgress = false;
+         }];
     }
-    
     return self;
 }
 
-- (void)searchTextUpdated:(NSString *)searchText
+- (void)translateWord:(NSString *)searchText
 {
-    if (searchText.length < 3)
-    {
-        return;
-    }
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget: self];
-    [self performSelector:@selector(makeRequest:) withObject:searchText afterDelay:self.throttlingDelay];
+    self.requestInProgress = true;
+    self.query = searchText;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+-(NSArray<NSString *> *) takeFirstFive:(NSArray<NSString *> *) translatedWords
 {
-    if ([keyPath isEqualToString:@"state"])
+    if(translatedWords.count > 5)
     {
-        
-        NSInteger state = ((NSNumber *)change[@"new"]).integerValue;
-        
-        switch (state)
-        {
-            case NEW:
-                break;
-            case INPROGRESS:
-                self.requestCount++;
-                self.requestInProgress = true;
-                break;
-            case CANCELED:
-                self.requestInProgress = false;
-                self.translatedWords = [NSArray new];
-                self.reversedTranslate = @"";
-                break;
-            case FAILED:
-                self.requestInProgress = false;
-                self.errorMessage = self.model.errorMessage;
-                break;
-            case DONE:
-                self.requestInProgress = false;
-                
-                // Get only five first elements
-                if(self.model.translatedWords.count > 5)
-                {
-                    NSMutableArray<NSString *>* tempArr = [NSMutableArray new];
-                    [tempArr addObject:self.model.translatedWords.firstObject];
-                    self.translatedWords = tempArr;
-                }
-                else
-                {
-                    self.translatedWords = self.model.translatedWords;
-                }
-                
-                self.reversedTranslate = self.model.reverseTranslate;
-                break;
+        NSMutableArray *tempArray = [NSMutableArray new];
+        for (int i = 0; i < 5; i++) {
+            [tempArray addObject:translatedWords[i]];
         }
+        return tempArray;
     }
-    else if ([keyPath isEqualToString:@"requestCount"])
-    {
-        self.requestCount = self.model.requestCount;
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+    return translatedWords;
 }
 
-- (void)makeRequest:(NSString *)requestText
+- (RACSignal *)createSimpleRequestSignalWithWord:(NSString *)word reverse:(BOOL)isReversed
 {
-    [self.model translateWord:requestText];
+    NSString *currentLanguage = isReversed ? TARGET_LANGUAGE : LANGUAGE;
+    NSString *targetLanguage =  isReversed ? LANGUAGE : TARGET_LANGUAGE;
+    @weakify(self);
+    return [[[self createUnitRequestWith:word currentLanguage:currentLanguage targetLanguage:targetLanguage] doNext:^(id  _Nullable x) {
+        @strongify(self);
+        self.requestCount++;
+    }]
+    catch:^RACSignal * _Nonnull(NSError * _Nonnull error) {
+        @strongify(self);
+        self.errorMessage = error.localizedDescription;
+        self.requestInProgress = false;
+        return [RACSignal empty];
+    }];
 }
 
-- (void)registerObserver
+- (RACSignal*) createUnitRequestWith:(NSString *)wordToTranslate
+                     currentLanguage:(NSString *)fromLanguage
+                      targetLanguage:(NSString *)toLanguage
 {
-    [self.model addObserver:self forKeyPath:@"state" options:NSKeyValueObservingOptionNew context:nil];
-    [self.model addObserver:self forKeyPath:@"requestCount" options:NSKeyValueObservingOptionInitial context:nil];
-}
-
-- (void)unregisterObserver
-{
-    [self.model removeObserver:self forKeyPath:@"requestCount"];
-    [self.model removeObserver:self forKeyPath:@"state"];
-}
-
-- (void)dealloc
-{
-    [self unregisterObserver];
+    return [UnitRequest performRequestWithWord:wordToTranslate currentLanguage:fromLanguage targetLanguage:toLanguage];
 }
 
 @end

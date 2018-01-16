@@ -7,21 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ApiDictionary.h"
+#import <ReactiveObjC/ReactiveObjC.h>
+@class ApiDictionary;
 
 @interface SearchViewModel: NSObject
 
-- (id) initWithModel: (ApiDictionary *) api;
-
-///props
+//props
 @property (nonatomic, readonly) NSArray<NSString *> *translatedWords;
 @property (nonatomic, readonly) NSString *errorMessage;
+@property (nonatomic, readonly) NSInteger requestCount;
 @property (nonatomic, readonly) NSString *reversedTranslate;
 @property (nonatomic, readonly) BOOL requestInProgress;
-@property (nonatomic, readonly) NSInteger requestCount;
-@property (nonatomic) NSTimeInterval throttlingDelay;
 
-/////actions
-- (void) searchTextUpdated:(NSString *) searchText;
+//actions
+-(void)translateWord:(NSString *)word;
+
+-(id)initWithThrottlingDuration:(float)delay;
 
 @end

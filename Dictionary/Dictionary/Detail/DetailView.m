@@ -7,6 +7,8 @@
 //
 
 #import "DetailView.h"
+#import "DetailViewModel.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface DetailView()
 
@@ -19,31 +21,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.viewModel addObserver:self forKeyPath:@"details" options:NSKeyValueObservingOptionNew context:nil];
+    [[RACObserve(self.viewModel, details) deliverOnMainThread]
+     subscribeNext:^(NSArray<UnitDictionary *> *definitions) {
+         self.definitionField.text = [self.definitionField.text stringByAppendingString:[self.word stringByAppendingString:@"\n"]];
+         for (UnitDictionary *unit in definitions)
+         {
+             self.definitionField.text = [self.definitionField.text stringByAppendingString:[unit.partOfSpeech stringByAppendingString:@"\n"]];
+             for (NSString* definitions in unit.definition)
+             {
+                 self.definitionField.text = [self.definitionField.text stringByAppendingString:[definitions stringByAppendingString:@"\n"]];
+             }
+         }
+     }];
     [self fillFormWithWord:self.word];
-}
-
-- (void)dealloc
-{
-    [self.viewModel removeObserver:self forKeyPath:@"details"];
-}
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
-    if([keyPath isEqualToString:@"details"])
-    {
-    
-        dispatch_async(dispatch_get_main_queue(), ^{
-           self.definitionField.text = [self.definitionField.text stringByAppendingString:[self.word stringByAppendingString:@"\n"]];
-            for (UnitDictionary *unit in self.viewModel.details)
-            {
-                self.definitionField.text = [self.definitionField.text stringByAppendingString:[unit.partOfSpeech stringByAppendingString:@"\n"]];
-                for (NSString* definitions in unit.definition)
-                {
-                    self.definitionField.text = [self.definitionField.text stringByAppendingString:[definitions stringByAppendingString:@"\n"]];
-                }
-            }
-        });
-    }
 }
 
 - (void)fillFormWithWord:(NSString *)word
