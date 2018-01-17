@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *totalRequest;
 @property (weak, nonatomic) IBOutlet UITextField *searchField;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UILabel *errorMessage;
+
 
 @end
 
@@ -73,22 +75,14 @@
          self.totalRequest.text = [requestCount stringValue];
      }];
 
-    [[[[RACObserve(self.viewModel, errorMessage)
+    [[[RACObserve(self.viewModel, errorMessage)
        filter:^BOOL(id  _Nullable value) {
            return value != nil;
        }]
-    map:^id(NSString *errorMessage){
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:errorMessage preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-            [alert dismissViewControllerAnimated:true completion:nil];
-        }];
-        [alert addAction:ok];
-        return alert;
-    }]
     deliverOnMainThread]
-    subscribeNext:^(UIAlertController *alertController){
+    subscribeNext:^(NSString *string){
         @strongify(self);
-        [self presentViewController:alertController animated:true completion:nil];
+        self.errorMessage.text = string;
     }];
 }
 
@@ -106,7 +100,8 @@
     return cell;
 }
 
-- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return self.viewModel.translatedWords.count;
 }
 

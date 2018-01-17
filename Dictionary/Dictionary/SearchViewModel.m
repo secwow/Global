@@ -10,34 +10,6 @@
 #import "UnitRequest.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 
-
-@interface RACSignal(Helper)
-
-//returns the selected number of elements in the array or more
--(RACSignal *)takeFirst:(int)elements;
-
-@end
-
-@implementation RACSignal(Helper)
-
--(RACSignal * __nullable)takeFirst:(int)elements
-{
-    return [self map:^id _Nullable(NSArray <NSString *> *translatedWord) {
-        if(translatedWord.count > 5)
-        {
-            NSMutableArray *tempArray = [NSMutableArray new];
-            for (int i = 0; i < 5; i++) {
-                [tempArray addObject:translatedWord[i]];
-            }
-            return tempArray;
-        }
-        return translatedWord;
-    }];
-}
-
-@end
-
-
 @interface SearchViewModel()
 
 @property (nonatomic) NSArray<NSString *> *translatedWords;
@@ -63,17 +35,16 @@
     {
         self.requestCount = 0;
         @weakify(self);
-        [[[[[[[RACObserve(self, query)
-               filter:^BOOL(NSString*  _Nullable value) {
-                   return value.length > 2;
-               }]
+        [[[[[[RACObserve(self, query)
               throttle:delay]
              distinctUntilChanged]
             map:^RACSignal *(NSString *searchText) {
                 return [self createSimpleRequestSignalWithWord:searchText reverse:false];
             }]
            switchToLatest]
-          takeFirst:5]
+          map:^id _Nullable(NSArray <NSString *> *translatedWords) {
+              return [self takeFirstFive:translatedWords];
+          }]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
              @strongify(self);
              self.translatedWords = translatedWords;
@@ -123,6 +94,7 @@
 
 - (RACSignal *)createSimpleRequestSignalWithWord:(NSString *)word reverse:(BOOL)isReversed
 {
+    NSLog(@"TASK WITH WORD %@", word);
     NSString *currentLanguage = isReversed ? TARGET_LANGUAGE : LANGUAGE;
     NSString *targetLanguage =  isReversed ? LANGUAGE : TARGET_LANGUAGE;
     @weakify(self);

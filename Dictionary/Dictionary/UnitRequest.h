@@ -14,6 +14,8 @@ typedef enum State : NSInteger
     NEW = 0, INPROGRESS = 1, CANCELED = 2, FAILED = 3, DONE = 4
 } State;
 
+
+
 @interface UnitRequest : NSObject
 
 @property (nonatomic,readonly) NSString *wordToTranslate;
