@@ -119,6 +119,7 @@
     viewController.word = self.viewModel.translatedWords[indexPath.row];
     viewController.viewModel = viewModel;
     [self.navigationController pushViewController:viewController animated:true];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:true];
 }
 
 @end

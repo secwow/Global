@@ -10,6 +10,34 @@
 #import "UnitRequest.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 
+
+@interface RACSignal(Helper)
+
+//returns the selected number of elements in the array or more
+-(RACSignal *)takeFirst:(int)elements;
+
+@end
+
+@implementation RACSignal(Helper)
+
+-(RACSignal * __nullable)takeFirst:(int)elements
+{
+    return [self map:^id _Nullable(NSArray <NSString *> *translatedWord) {
+        if(translatedWord.count > 5)
+        {
+            NSMutableArray *tempArray = [NSMutableArray new];
+            for (int i = 0; i < 5; i++) {
+                [tempArray addObject:translatedWord[i]];
+            }
+            return tempArray;
+        }
+        return translatedWord;
+    }];
+}
+
+@end
+
+
 @interface SearchViewModel()
 
 @property (nonatomic) NSArray<NSString *> *translatedWords;
@@ -45,9 +73,7 @@
                 return [self createSimpleRequestSignalWithWord:searchText reverse:false];
             }]
            switchToLatest]
-          map:^id _Nullable(NSArray <NSString *> *translatedWords) {
-              return [self takeFirstFive:translatedWords];
-          }]
+          takeFirst:5]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
              @strongify(self);
              self.translatedWords = translatedWords;
