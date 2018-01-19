@@ -26,17 +26,12 @@
 
 @implementation UnitRequest
 
-static UnitRequest *_instance;
 
 +(RACSignal *)performRequestWithWord:(NSString *)wordToTranslate currentLanguage:(NSString *)fromLanguage targetLanguage:(NSString *)toLanguage {
-    if (_instance != nil)
-    {
-        [_instance cancelRequest];
-        _instance = nil;
-    }
+    
     return [RACSignal createSignal:^RACDisposable*(id<RACSubscriber> subscriber)
       {
-          _instance = [[UnitRequest alloc]initRequestWithWord:wordToTranslate
+          UnitRequest *request = [[UnitRequest alloc]initRequestWithWord:wordToTranslate
                                              currentLanguage:fromLanguage
                                               targetLanguage:toLanguage
                                                        block:^(NSArray<NSString *> *translatedWords, NSError *error){
@@ -51,8 +46,10 @@ static UnitRequest *_instance;
                                                            }
                                                        }];
 
-          [_instance makeRequest];
-          return nil;
+          [request makeRequest];
+          return [RACDisposable disposableWithBlock:^{
+              [request cancelRequest];
+          }];
       }];
 }
 

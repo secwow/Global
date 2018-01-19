@@ -34,14 +34,31 @@
     if (self != nil)
     {
         self.requestCount = 0;
-        @weakify(self);
-        [[[[[[RACObserve(self, query)
-              throttle:delay]
-             distinctUntilChanged]
-            map:^RACSignal *(NSString *searchText) {
-                return [self createSimpleRequestSignalWithWord:searchText reverse:false];
-            }]
-           switchToLatest]
+        @weakify(self);	
+        RACSignal *validSearchTextSignal = [[[RACObserve(self, query)
+            throttle:delay]
+           distinctUntilChanged]
+          filter:^BOOL(NSString *searchText) {
+              return searchText.length >= 2;
+          }];
+        
+        [validSearchTextSignal
+         subscribeNext:^(id  _Nullable x) {
+             self.requestInProgress = true;
+         }];
+        
+        RACSignal *simpleRequestSignal =
+        [validSearchTextSignal
+         flattenMap:^__kindof RACSignal * _Nullable(NSString *searchText) {
+            return [self createSimpleRequestSignalWithWord:searchText reverse:false];
+        }];
+
+        [simpleRequestSignal
+         subscribeNext:^(id  _Nullable x) {
+            self.requestCount++;
+        }];
+        
+        [[simpleRequestSignal
           map:^id _Nullable(NSArray <NSString *> *translatedWords) {
               return [self takeFirstFive:translatedWords];
           }]
@@ -52,30 +69,46 @@
              self.errorMessage = nil;
          }];
         
-        [[[[[RACObserve(self, translatedWords)
-             filter:^BOOL(NSArray <NSString *> *translatedWords) {
-                 return translatedWords.count > 0;
-             }]
-            map:^NSString *(NSArray <NSString *> *translatedWords) {
-                return [translatedWords firstObject];
-            }]
-           map:^RACSignal *(NSString *searchText) {
+        RACSignal *reverseTranslateWordSignal =
+        [[RACObserve(self, translatedWords)
+         filter:^BOOL(NSArray <NSString *> *translatedWords) {
+             return translatedWords.count > 0;
+         }]
+        map:^NSString *(NSArray <NSString *> *translatedWords) {
+            return [translatedWords firstObject];
+        }];
+        
+        RACSignal *reverseRequestSignal =
+        [reverseTranslateWordSignal
+         flattenMap:^__kindof RACSignal * _Nullable(NSString *searchText) {
+               @strongify(self);
                return [self createSimpleRequestSignalWithWord:searchText reverse:true];
-           }]
-          switchToLatest]
-         subscribeNext:^(NSArray <NSString *> *translatedWords) {
+         }];
+        
+        [reverseRequestSignal
+         subscribeNext:^(id  _Nullable x) {
              @strongify(self);
-             self.reversedTranslate = [translatedWords firstObject];
-             self.errorMessage = nil;
              self.requestInProgress = false;
          }];
+        
+        [reverseRequestSignal
+         subscribeNext:^(id  _Nullable x) {
+             @strongify(self);
+             self.requestCount++;
+        }];
+        
+        [reverseRequestSignal
+         subscribeNext:^(NSArray <NSString *> *translatedWords) {
+                         @strongify(self);
+                         self.reversedTranslate = [translatedWords firstObject];
+                         self.errorMessage = nil;
+        }];
     }
     return self;
 }
 
 - (void)translateWord:(NSString *)searchText
 {
-    self.requestInProgress = true;
     self.query = searchText;
 }
 
@@ -98,10 +131,7 @@
     NSString *currentLanguage = isReversed ? TARGET_LANGUAGE : LANGUAGE;
     NSString *targetLanguage =  isReversed ? LANGUAGE : TARGET_LANGUAGE;
     @weakify(self);
-    return [[[self createUnitRequestWith:word currentLanguage:currentLanguage targetLanguage:targetLanguage] doNext:^(id  _Nullable x) {
-        @strongify(self);
-        self.requestCount++;
-    }]
+    return [[self createUnitRequestWith:word currentLanguage:currentLanguage targetLanguage:targetLanguage] 
     catch:^RACSignal * _Nonnull(NSError * _Nonnull error) {
         @strongify(self);
         self.errorMessage = error.localizedDescription;
