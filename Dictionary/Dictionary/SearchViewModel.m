@@ -34,45 +34,58 @@
     if (self != nil)
     {
         self.requestCount = 0;
-        @weakify(self);	
-        RACSignal *validSearchTextSignal = [[[RACObserve(self, query)
-            throttle:delay]
-           distinctUntilChanged]
+        @weakify(self);
+        RACSignal *throttledSignal =
+        [[RACObserve(self, query)
+           throttle:delay]
+          distinctUntilChanged];
+        
+        [throttledSignal
+         subscribeNext:^(id  _Nullable x) {
+             self.reversedTranslate = nil;
+             self.translatedWords = [NSArray new];
+         }];
+       
+        RACSignal *validSearchTextSignal = [throttledSignal
           filter:^BOOL(NSString *searchText) {
-              return searchText.length >= 2;
+            return searchText.length >= 2;
           }];
         
         [validSearchTextSignal
          subscribeNext:^(id  _Nullable x) {
-             self.requestInProgress = true;
+            @strongify(self);
+            self.requestInProgress = true;
          }];
         
         RACSignal *simpleRequestSignal =
         [validSearchTextSignal
          flattenMap:^__kindof RACSignal * _Nullable(NSString *searchText) {
+            @strongify(self);
             return [self createSimpleRequestSignalWithWord:searchText reverse:false];
         }];
 
         [simpleRequestSignal
          subscribeNext:^(id  _Nullable x) {
+            @strongify(self);
             self.requestCount++;
         }];
         
         [[simpleRequestSignal
           map:^id _Nullable(NSArray <NSString *> *translatedWords) {
-              return [self takeFirstFive:translatedWords];
+            @strongify(self);
+            return [self takeFirstFive:translatedWords];
           }]
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
-             @strongify(self);
-             self.translatedWords = translatedWords;
-             self.reversedTranslate = nil;
-             self.errorMessage = nil;
+            @strongify(self);
+            self.translatedWords = translatedWords;
+            self.reversedTranslate = nil;
+            self.errorMessage = nil;
          }];
         
         RACSignal *reverseTranslateWordSignal =
         [[RACObserve(self, translatedWords)
          filter:^BOOL(NSArray <NSString *> *translatedWords) {
-             return translatedWords.count > 0;
+            return translatedWords.count > 0;
          }]
         map:^NSString *(NSArray <NSString *> *translatedWords) {
             return [translatedWords firstObject];
@@ -81,27 +94,36 @@
         RACSignal *reverseRequestSignal =
         [reverseTranslateWordSignal
          flattenMap:^__kindof RACSignal * _Nullable(NSString *searchText) {
-               @strongify(self);
-               return [self createSimpleRequestSignalWithWord:searchText reverse:true];
+            @strongify(self);
+            return [self createSimpleRequestSignalWithWord:searchText reverse:true];
          }];
         
         [reverseRequestSignal
          subscribeNext:^(id  _Nullable x) {
-             @strongify(self);
-             self.requestInProgress = false;
+            @strongify(self);
+            self.requestInProgress = false;
          }];
         
         [reverseRequestSignal
          subscribeNext:^(id  _Nullable x) {
-             @strongify(self);
-             self.requestCount++;
+            @strongify(self);
+            self.requestCount++;
         }];
         
         [reverseRequestSignal
          subscribeNext:^(NSArray <NSString *> *translatedWords) {
-                         @strongify(self);
-                         self.reversedTranslate = [translatedWords firstObject];
-                         self.errorMessage = nil;
+            @strongify(self);
+            self.reversedTranslate = [translatedWords firstObject];
+            self.errorMessage = nil;
+        }];
+        
+        [[RACObserve(self, errorMessage)
+         filter:^BOOL(id  _Nullable value) {
+             return value != nil;
+        }]
+         subscribeNext:^(NSString *errorMessage) {
+            self.reversedTranslate = nil;
+            self.translatedWords = [NSArray new];
         }];
     }
     return self;
